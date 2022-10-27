@@ -1,0 +1,34 @@
+{
+  "name": "phala-e2e-test",
+  "version": "2.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Phala-Network/phala-blockchain.git",
+  "author": "h4x3rotab <h4x3rotab@gmail.com>",
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "private": true,
+  "scripts": {
+    "test": "mocha src/fullstack.js -j 1",
+    "setup:logserver": "node src/setup-logserver.js",
+    "build:proto": "scripts/build_proto.sh"
+  },
+  "dependencies": {
+    "@phala/sdk": "^0.3.4-beta.0",
+    "@polkadot/api": "^9.4.1",
+    "@polkadot/api-contract": "^9.4.1",
+    "@phala/typedefs": "^0.2.29",
+    "axios": "^0.25.0",
+    "chai": "^4.3.6",
+    "dotenv": "^16.0.0",
+    "mocha": "^9.2.0",
+    "portfinder": "^1.0.28"
+  },
+  "devDependencies": {
+    "protobufjs": "^6.11.3"
+  }
+}
