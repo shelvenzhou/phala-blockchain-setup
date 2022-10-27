@@ -1,9 +1,9 @@
 {
-  "name": "phala-e2e-test",
+  "name": "phala-blockchain-setup",
   "version": "2.0.0",
   "main": "index.js",
-  "repository": "git@github.com:Phala-Network/phala-blockchain.git",
-  "author": "h4x3rotab <h4x3rotab@gmail.com>",
+  "repository": "git@github.com:shelvenzhou/phala-blockchain-setup.git",
+  "author": "shelven <shelvenzhou@phala.network>",
   "license": "Apache-2.0",
   "licenses": [
     {
@@ -13,9 +13,7 @@
   ],
   "private": true,
   "scripts": {
-    "test": "mocha src/fullstack.js -j 1",
-    "setup:logserver": "node src/setup-logserver.js",
-    "build:proto": "scripts/build_proto.sh"
+    "setup:logserver": "node src/setup-logserver.js"
   },
   "dependencies": {
     "@phala/sdk": "^0.3.4-beta.0",
