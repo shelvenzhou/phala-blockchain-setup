@@ -15,7 +15,7 @@ function loadContractFile(contractFile) {
 
 async function deployDriverContract(api, txqueue, system, pair, cert, contract, clusterId, name, salt) {
     console.log(`Contracts: uploading ${contract.name}`);
-    // upload the contract 
+    // upload the contract
     const { events: deployEvents } = await txqueue.submit(
         api.tx.utility.batchAll(
             [
@@ -184,14 +184,25 @@ function hex(b) {
     }
 }
 
-async function getWorkerPubkey(api) {
-    const workers = await api.query.phalaRegistry.workers.entries();
-    const worker = workers[0][0].args[0].toString();
-    return worker;
+async function forceRegisterWorker(api, txpool, pair, worker) {
+    console.log('Worker: registering', worker);
+    await txpool.submit(
+        api.tx.sudo.sudo(
+            api.tx.phalaRegistry.forceRegisterWorker(worker, worker, null)
+        ),
+        pair,
+    );
+    await checkUntil(
+        async () => (await api.query.phalaRegistry.workers(worker)).isSome,
+        4 * 6000
+    );
+    console.log('Worker: added');
 }
 
 async function setupGatekeeper(api, txpool, pair, worker) {
-    if ((await api.query.phalaRegistry.gatekeeper()).length > 0) {
+    const gatekeepers = await api.query.phalaRegistry.gatekeeper();
+    if (gatekeepers.toHuman().includes(worker)) {
+        console.log('Gatekeeper: skip', worker);
         return;
     }
     console.log('Gatekeeper: registering');
@@ -202,7 +213,7 @@ async function setupGatekeeper(api, txpool, pair, worker) {
         pair,
     );
     await checkUntil(
-        async () => (await api.query.phalaRegistry.gatekeeper()).length == 1,
+        async () => (await api.query.phalaRegistry.gatekeeper()).toHuman().includes(worker),
         4 * 6000
     );
     console.log('Gatekeeper: added');
@@ -213,7 +224,7 @@ async function setupGatekeeper(api, txpool, pair, worker) {
     console.log('Gatekeeper: master key ready');
 }
 
-async function deployCluster(api, txqueue, sudoer, owner, worker, defaultCluster = '0x0000000000000000000000000000000000000000000000000000000000000000') {
+async function deployCluster(api, txqueue, sudoer, owner, workers, defaultCluster = '0x0000000000000000000000000000000000000000000000000000000000000000') {
     const clusterInfo = await api.query.phalaFatContracts.clusters(defaultCluster);
     if (clusterInfo.isSome) {
         return { clusterId: defaultCluster, systemContract: clusterInfo.unwrap().systemContract.toHex() };
@@ -224,7 +235,7 @@ async function deployCluster(api, txqueue, sudoer, owner, worker, defaultCluster
         api.tx.sudo.sudo(api.tx.phalaFatContracts.addCluster(
             owner,
             'Public', // can be {'OnlyOwner': accountId}
-            [worker]
+            workers
         )),
         sudoer
     );
@@ -244,9 +255,9 @@ async function deployCluster(api, txqueue, sudoer, owner, worker, defaultCluster
     return { clusterId, systemContract };
 }
 
-async function contractApi(api, pruntimeURL, contract) {
+async function contractApi(api, pruntimeUrl, contract) {
     const newApi = await api.clone().isReady;
-    const phala = await Phala.create({ api: newApi, baseURL: pruntimeURL, contractId: contract.address });
+    const phala = await Phala.create({ api: newApi, baseURL: pruntimeUrl, contractId: contract.address });
     const contractApi = new ContractPromise(
         phala.api,
         contract.metadata,
@@ -262,15 +273,17 @@ function toBytes(s) {
 }
 
 async function main() {
+    const nodeUrl = 'ws://localhost:9944';
+    const workerUrls = ['http://localhost:8001'];
+    const gatekeeperUrls = ['http://localhost:8999'];
+
     const contractSystem = loadContractFile('./res/system.contract');
     const contractSidevmop = loadContractFile('./res/sidevm_deployer.contract');
     const contractLogServer = loadContractFile('./res/log_server.contract');
     const logServerSidevmWasm = fs.readFileSync('./res/log_server.sidevm.wasm', 'hex');
-    const nodeURL = 'ws://localhost:19944';
-    const pruntimeURL = 'http://localhost:8000';
 
     // Connect to the chain
-    const wsProvider = new WsProvider(nodeURL);
+    const wsProvider = new WsProvider(nodeUrl);
     const api = await ApiPromise.create({
         provider: wsProvider,
         types: {
@@ -288,32 +301,55 @@ async function main() {
     const alice = keyring.addFromUri('//Alice')
     const certAlice = await Phala.signCertificate({ api, pair: alice });
 
-    // Connect to pruntime
-    const prpc = new PRuntimeApi(pruntimeURL);
-    const worker = await getWorkerPubkey(api);
-    const connectedWorker = hex((await prpc.getInfo({})).publicKey);
-    console.log('Worker:', worker);
-    console.log('Connected worker:', connectedWorker);
+    // Connect to pruntimes
+    const workers = await Promise.all(workerUrls.map(async w => {
+        let api = new PRuntimeApi(w);
+        let pubkey = hex((await api.getInfo()).publicKey);
+        return {
+            pubkey: pubkey,
+            api: api,
+        };
+    }));
+    const gatekeepers = await Promise.all(gatekeeperUrls.map(async w => {
+        let api = new PRuntimeApi(w);
+        let pubkey = hex((await api.getInfo()).publicKey);
+        return {
+            pubkey: pubkey,
+            api: api,
+        };
+    }));
+    console.log('Workers:', workers);
+    console.log('Gatekeepers', gatekeepers);
 
     // Basic phala network setup
-    await setupGatekeeper(api, txqueue, alice, worker);
+    for (const w of workers) {
+        await forceRegisterWorker(api, txqueue, alice, w.pubkey);
+    }
+    for (const w of gatekeepers) {
+        await forceRegisterWorker(api, txqueue, alice, w.pubkey);
+        await setupGatekeeper(api, txqueue, alice, w.pubkey);
+    }
 
     // Upload the pink-system wasm to the chain. It is required to create a cluster.
     await uploadSystemCode(api, txqueue, alice, contractSystem.wasm);
 
-    const { clusterId, systemContract } = await deployCluster(api, txqueue, alice, alice.address, worker);
+    const { clusterId, systemContract } = await deployCluster(api, txqueue, alice, alice.address, workers.map(w => w.pubkey));
     contractSystem.address = systemContract;
 
-    const system = await contractApi(api, pruntimeURL, contractSystem);
+    let pruntimeUrl = workerUrls[0];
+    let default_worker = workers[0];
+    console.log(`Connect to ${pruntimeUrl} for query`);
+
+    const system = await contractApi(api, pruntimeUrl, contractSystem);
 
     // Deploy driver: Sidevm deployer
     await deployDriverContract(api, txqueue, system, alice, certAlice, contractSidevmop, clusterId, "SidevmOperation");
 
-    const sidevmDeployer = await contractApi(api, pruntimeURL, contractSidevmop);
+    const sidevmDeployer = await contractApi(api, pruntimeUrl, contractSidevmop);
 
     // Allow the logger to deploy sidevm
     const salt = hex(crypto.randomBytes(4));
-    const { id: loggerId } = await prpc.calculateContractId({
+    const { id: loggerId } = await default_worker.api.calculateContractId({
         deployer: hex(alice.publicKey),
         clusterId,
         codeHash: contractLogServer.metadata.source.hash,
@@ -335,7 +371,7 @@ async function main() {
     await deployDriverContract(api, txqueue, system, alice, certAlice, contractLogServer, clusterId, "PinkLogger", salt);
 
     await sleep(2000);
-    const logger = await contractApi(api, pruntimeURL, contractLogServer);
+    const logger = await contractApi(api, pruntimeUrl, contractLogServer);
     // Trigger some contract logs
     for (var i = 0; i < 100; i++) {
         await logger.query.logTest(certAlice, {}, "hello " + i);
