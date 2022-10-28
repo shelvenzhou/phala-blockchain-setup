@@ -273,9 +273,9 @@ function toBytes(s) {
 }
 
 async function main() {
-    const nodeUrl = 'ws://localhost:9944';
-    const workerUrls = ['http://localhost:8001'];
-    const gatekeeperUrls = ['http://localhost:8999'];
+    const nodeUrl = 'wss://poc5.phala.network/ws';
+    const workerUrls = ['https://poc5.phala.network/tee-api-1'];
+    const gatekeeperUrls = ['https://poc5.phala.network/gk-api'];
 
     const contractSystem = loadContractFile('./res/system.contract');
     const contractSidevmop = loadContractFile('./res/sidevm_deployer.contract');

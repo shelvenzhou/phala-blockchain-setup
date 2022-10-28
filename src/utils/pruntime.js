@@ -37,6 +37,10 @@ class PRuntimeApi {
         console.log(`calculateContractId(${JSON.stringify(args)})`);
         return await this.rpc.calculateContractId(args);
     }
+
+    async addEndpoint(endpoint) {
+        return await this.rpc.addEndpoint(endpoint);
+    }
 }
 
 // function rand() {
