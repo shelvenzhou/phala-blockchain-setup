@@ -306,6 +306,7 @@ async function main() {
         let api = new PRuntimeApi(w);
         let pubkey = hex((await api.getInfo()).publicKey);
         return {
+            url: w,
             pubkey: pubkey,
             api: api,
         };
@@ -314,6 +315,7 @@ async function main() {
         let api = new PRuntimeApi(w);
         let pubkey = hex((await api.getInfo()).publicKey);
         return {
+            url: w,
             pubkey: pubkey,
             api: api,
         };
@@ -324,6 +326,7 @@ async function main() {
     // Basic phala network setup
     for (const w of workers) {
         await forceRegisterWorker(api, txqueue, alice, w.pubkey);
+        await w.api.addEndpoint({ encodedEndpointType: [1], endpoint: w.url });
     }
     for (const w of gatekeepers) {
         await forceRegisterWorker(api, txqueue, alice, w.pubkey);
@@ -336,8 +339,8 @@ async function main() {
     const { clusterId, systemContract } = await deployCluster(api, txqueue, alice, alice.address, workers.map(w => w.pubkey));
     contractSystem.address = systemContract;
 
-    let pruntimeUrl = workerUrls[0];
     let default_worker = workers[0];
+    let pruntimeUrl = default_worker.url;
     console.log(`Connect to ${pruntimeUrl} for query`);
 
     const system = await contractApi(api, pruntimeUrl, contractSystem);
