@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { ApiPromise, WsProvider, Keyring } = require('@polkadot/api');
 const { ContractPromise } = require('@polkadot/api-contract');
 const Phala = require('@phala/sdk');
@@ -272,10 +274,17 @@ function toBytes(s) {
     return utf8Encode.encode(s)
 }
 
+function loadUrls(exp, defaultVal) {
+    if (!exp) {
+        return defaultVal
+    }
+    return exp.trim().split(',');
+}
+
 async function main() {
-    const nodeUrl = 'wss://poc5.phala.network/ws';
-    const workerUrls = ['https://poc5.phala.network/tee-api-1'];
-    const gatekeeperUrls = ['https://poc5.phala.network/gk-api'];
+    const nodeUrl = process.env.ENDPOINT || 'wss://poc5.phala.network/ws';
+    const workerUrls = loadUrls(process.env.WORKERS, ['https://poc5.phala.network/tee-api-1']);
+    const gatekeeperUrls = loadUrls(process.env.GKS, ['https://poc5.phala.network/gk-api']);
 
     const contractSystem = loadContractFile('./res/system.contract');
     const contractSidevmop = loadContractFile('./res/sidevm_deployer.contract');
