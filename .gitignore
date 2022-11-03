@@ -1,2 +1,3 @@
 node_modules/
 phala-e2e-*/
+.env
