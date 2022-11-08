@@ -335,7 +335,7 @@ async function main() {
     // Basic phala network setup
     for (const w of workers) {
         await forceRegisterWorker(api, txqueue, alice, w.pubkey);
-        await w.api.addEndpoint({ encodedEndpointType: [1], endpoint: w.url });
+        await w.api.addEndpoint({ encodedEndpointType: [1], endpoint: w.url }); // EndpointType: 0 for I2P and 1 for HTTP
     }
     for (const w of gatekeepers) {
         await forceRegisterWorker(api, txqueue, alice, w.pubkey);
@@ -401,10 +401,13 @@ async function main() {
     };
     const data = hex(toBytes(JSON.stringify(condition)));
     const hexlog = await logger.sidevmQuery(data, certAlice);
-    const bytes = api.createType("Vec<u8>", hexlog);
-    const decoder = new TextDecoder();
-    const jsonText = decoder.decode(bytes);
-    console.log('log:', jsonText);
+
+    // Log parsing
+    const resp = api.createType('InkResponse', hexlog);
+    const result = resp.result.toHuman()
+    const text = result.Ok.InkMessageReturn
+    console.log('log:', text)
+
     // Sample query response:
     const _ = {
         "next": 3, // Sequence number for the next query. For pagination.
