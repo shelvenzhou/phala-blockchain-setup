@@ -15,8 +15,8 @@ function loadContractFile(contractFile) {
     return { wasm, metadata, constructor, name };
 }
 
-async function deployDriverContract(api, txqueue, system, pair, cert, contract, clusterId, name, salt) {
-    console.log(`Contracts: uploading ${contract.name}`);
+async function deployContract(api, txqueue, pair, contract, clusterId, salt) {
+    console.log(`Contract: deploying ${contract.name}`);
     // upload the contract
     const { events: deployEvents } = await txqueue.submit(
         api.tx.utility.batchAll(
@@ -45,11 +45,16 @@ async function deployDriverContract(api, txqueue, system, pair, cert, contract, 
         numContracts,
         4 * 6000
     );
-    console.log('Contracts: uploaded');
     await checkUntil(
         async () => (await api.query.phalaRegistry.contractKeys(contract.address)).isSome,
         4 * 6000
     );
+    console.log(`Contract: ${contract.name} deployed to ${contract.address}`);
+}
+
+async function deployDriverContract(api, txqueue, system, pair, cert, contract, clusterId, name, salt) {
+    await deployContract(api, txqueue, pair, contract, clusterId, salt);
+
     await txqueue.submit(
         system.tx["system::setDriver"]({}, name, contract.address),
         pair
@@ -65,7 +70,7 @@ async function deployDriverContract(api, txqueue, system, pair, cert, contract, 
         },
         4 * 6000
     );
-    console.log(`Contracts: ${contract.name} deployed`);
+    console.log(`Driver ${name} set to ${contract.address}`)
     return contract.address;
 }
 
