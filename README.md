@@ -6,6 +6,8 @@ All the contracts are compiled from <https://github.com/Phala-Network/phala-bloc
 
 ## Usage
 
+### Cluster Setup
+
 To setup the blockchain, run
 
 ```shell
@@ -24,7 +26,7 @@ This will
   - the log server printing all the Phat contracts' log;
   - the SideVM deployer controlling which contracts can start the SideVM;
 
----
+### SideVM Auth
 
 To authorized certain contract to call the `start_sidevm`. First, upload your contract using <https://phat.phala.network/> and get the contract id, then run
 
