@@ -352,6 +352,7 @@ async function main() {
 
     const { clusterId, systemContract } = await deployCluster(api, txqueue, alice, alice.address, workers.map(w => w.pubkey));
     contractSystem.address = systemContract;
+    console.log('Cluster system contract address:', systemContract);
 
     let default_worker = workers[0];
     let pruntimeUrl = default_worker.url;
@@ -390,7 +391,7 @@ async function main() {
     await sleep(2000);
     const logger = await contractApi(api, pruntimeUrl, contractLogServer);
     // Trigger some contract logs
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 5; i++) {
         await logger.query.logTest(certAlice, {}, "hello " + i);
     }
     // Query input: a JSON doc with three optinal fields:
@@ -400,7 +401,7 @@ async function main() {
         // The target contract to query. Default to all contracts
         contract: contractLogServer.address,
         // The sequence number start from. Default to 0.
-        from: 20,
+        from: 1,
         // Max number of items should returned. Default to not limited.
         count: 2,
     };

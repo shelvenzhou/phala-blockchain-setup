@@ -37,3 +37,13 @@ WORKERS=http://localhost:8000 \
 GKS=http://localhost:8000 \
 yarn cluster:auth_sidevm
 ```
+
+### Dump Logs
+
+Dump the full log from the SideVM logger in a worker:
+
+```
+ENDPOINT=ws://localhost:9944 \
+WORKERS=http://localhost:8000 \
+yarn util:dump_logs
+```
