@@ -13,7 +13,7 @@
   ],
   "private": true,
   "scripts": {
-    "setup:logserver": "node src/setup-logserver.js",
+    "setup:drivers": "node src/setup-drivers.js",
     "cluster:auth_sidevm": "node src/cluster-auth-sidevm.js",
     "util:dump_logs": "node src/read-log.js"
   },
