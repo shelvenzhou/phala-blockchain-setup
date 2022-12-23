@@ -86,6 +86,7 @@ async function deployContract(api, txqueue, system, pair, cert, contract, cluste
             0,
             estimatedFee.gasRequired.refTime,
             estimatedFee.storageDeposit.asCharge || 0,
+            0,
         )
         ,
         pair
