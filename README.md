@@ -14,7 +14,7 @@ To setup the blockchain, run
 ENDPOINT=ws://localhost:9944 \
 WORKERS=http://localhost:8000 \
 GKS=http://localhost:8000 \
-yarn setup:logserver
+yarn setup:drivers
 ```
 
 This will
