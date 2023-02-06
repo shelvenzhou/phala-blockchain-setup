@@ -16,7 +16,7 @@ const BLOCK_INTERVAL = 12_000;
 
 function loadContractFile(contractFile) {
     const metadata = JSON.parse(fs.readFileSync(contractFile));
-    const constructor = metadata.V3.spec.constructors.find(c => c.label == 'default').selector;
+    const constructor = metadata.spec.constructors.find(c => c.label == 'default').selector;
     const name = metadata.contract.name;
     const wasm = metadata.source.wasm;
     return { wasm, metadata, constructor, name };
@@ -142,7 +142,7 @@ async function deployDriverContract(api, txqueue, system, pair, cert, contract, 
     await checkUntil(
         async () => {
             const { output } = await system.query["system::getDriver"](cert, {}, name);
-            return output.isSome && output.unwrap().eq(contract.address);
+            return output?.asOk.isSome && output?.asOk.unwrap().eq(contract.address);
         },
         8 * BLOCK_INTERVAL
     );
