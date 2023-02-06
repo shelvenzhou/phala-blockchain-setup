@@ -371,12 +371,13 @@ async function main() {
 
     const sudoAccount = process.env.SUDO || '//Alice';
     const treasuryAccount = process.env.TREASURY || '//Treasury';
+    const driversDir = process.env.DRIVERS_DIR || './res';
 
-    const contractSystem = loadContractFile('./res/system.contract');
-    const contractSidevmop = loadContractFile('./res/sidevm_deployer.contract');
-    const contractLogServer = loadContractFile('./res/log_server.contract');
-    const contractTokenomic = loadContractFile('./res/tokenomic.contract');
-    const logServerSidevmWasm = fs.readFileSync('./res/log_server.sidevm.wasm', 'hex');
+    const contractSystem = loadContractFile(`${driversDir}/system.contract`);
+    const contractSidevmop = loadContractFile(`${driversDir}/sidevm_deployer.contract`);
+    const contractLogServer = loadContractFile(`${driversDir}/log_server.contract`);
+    const contractTokenomic = loadContractFile(`${driversDir}/tokenomic.contract`);
+    const logServerSidevmWasm = fs.readFileSync(`${driversDir}/log_server.sidevm.wasm`, 'hex');
 
     // Connect to the chain
     const wsProvider = new WsProvider(nodeUrl);
