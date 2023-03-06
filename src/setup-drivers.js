@@ -377,6 +377,7 @@ async function main() {
     const contractSidevmop = loadContractFile(`${driversDir}/sidevm_deployer.contract`);
     const contractLogServer = loadContractFile(`${driversDir}/log_server.contract`);
     const contractTokenomic = loadContractFile(`${driversDir}/tokenomic.contract`);
+    const contractQjs = loadContractFile(`${driversDir}/qjs.contract`);
     const logServerSidevmWasm = fs.readFileSync(`${driversDir}/log_server.sidevm.wasm`, 'hex');
 
     // Connect to the chain
@@ -506,6 +507,21 @@ async function main() {
         async () => (await sidevmDeployer.query['sidevmOperation::canDeploy'](certSudo, {}, loggerId)),
         8 * BLOCK_INTERVAL
     );
+
+    // Deploy the QuickJS engine
+    await txqueue.submit(api.tx.phalaFatContracts.clusterUploadResource(clusterId, 'IndeterministicInkCode', contractQjs.wasm), sudo);
+    await txqueue.submit(
+        system.tx["system::setDriver"]({ gasLimit: "10000000000000" }, 'JsDelegate', contractQjs.metadata.source.hash),
+        sudo
+    );
+    await checkUntil(async () => {
+        const { output } = await system.query["system::getDriver"](
+            certSudo,
+            {},
+            "JsDelegate"
+        );
+        return output.isSome;
+    }, 8 * BLOCK_INTERVAL);
 
     // Upload the logger's sidevm wasm code
     await txqueue.submit(
