@@ -116,8 +116,8 @@ async function deployContract(api, txqueue, system, pair, cert, contract, cluste
 async function deployDriverContract(api, txqueue, system, pair, cert, contract, clusterId, name, salt) {
     // check the existense of driver contract
     const { output } = await system.query["system::getDriver"](cert, {}, name);
-    if (output.isSome) {
-        contract.address = output.unwrap().toHex();
+    if (output?.asOk.isSome) {
+        contract.address = output?.asOk.unwrap().toHex();
         console.log(`Driver ${name} exists in ${contract.address}`);
         return contract.address;
     }
@@ -139,6 +139,8 @@ async function deployDriverContract(api, txqueue, system, pair, cert, contract, 
         system.tx["system::grantAdmin"](defaultTxConfig, contract.address),
         pair
     );
+
+    console.log('Driver: wait for registration');
     await checkUntil(
         async () => {
             const { output } = await system.query["system::getDriver"](cert, {}, name);
@@ -319,7 +321,8 @@ async function deployCluster(api, txqueue, sudoer, owner, workers, treasury, def
             owner,
             'Public', // can be {'OnlyOwner': accountId}
             workers,
-            "100000000000000000", 1, 1, 1, treasury.address
+            "100000000000000", // 100 PHA
+            1, 1, 1, treasury.address
         )),
         sudoer
     );
@@ -327,11 +330,15 @@ async function deployCluster(api, txqueue, sudoer, owner, workers, treasury, def
     console.assert(ev.section == 'phalaFatContracts' && ev.method == 'ClusterCreated');
     const clusterId = ev.data[0].toString();
     const systemContract = ev.data[1].toString();
-    console.log('Cluster: created', clusterId)
+    console.log('Cluster: created on chain', clusterId);
+
+    console.log('Cluster: wait for GK key generation');
     await checkUntil(
         async () => (await api.query.phalaRegistry.clusterKeys(clusterId)).isSome,
         8 * BLOCK_INTERVAL
     );
+
+    console.log('Cluster: wait for system contract instantiation');
     await checkUntil(
         async () => (await api.query.phalaRegistry.contractKeys(systemContract)).isSome,
         8 * BLOCK_INTERVAL
@@ -377,6 +384,7 @@ async function main() {
     const contractSidevmop = loadContractFile(`${driversDir}/sidevm_deployer.contract`);
     const contractLogServer = loadContractFile(`${driversDir}/log_server.contract`);
     const contractTokenomic = loadContractFile(`${driversDir}/tokenomic.contract`);
+    const contractQjs = loadContractFile(`${driversDir}/qjs.contract`);
     const logServerSidevmWasm = fs.readFileSync(`${driversDir}/log_server.sidevm.wasm`, 'hex');
 
     // Connect to the chain
@@ -482,6 +490,30 @@ async function main() {
         console.log('   stake:', stake.toHuman());
     });
 
+    // Deploy the QuickJS engine
+    const { output } = await system.query["system::getDriver"](certSudo, {}, 'JsDelegate');
+    if (output?.asOk.isSome) {
+        contractQjs.address = output?.asOk.unwrap().toHex();
+        console.log(`Driver JsDelegate exists in ${contractQjs.address}`);
+    } else {
+        console.log('Waiting the qjs to be synced into pruntime');
+        await txqueue.submit(api.tx.phalaFatContracts.clusterUploadResource(clusterId, 'IndeterministicInkCode', contractQjs.wasm), sudo);
+        console.log(`Set JsDelegate code`);
+        await txqueue.submit(
+            system.tx["system::setDriver"]({ gasLimit: "10000000000000" }, 'JsDelegate', contractQjs.metadata.source.hash),
+            sudo
+        );
+        console.log('Driver: wait for registration');
+        await checkUntil(async () => {
+            const { output } = await system.query["system::getDriver"](
+                certSudo,
+                {},
+                "JsDelegate"
+            );
+            return output?.asOk.isSome;
+        }, 8 * BLOCK_INTERVAL);
+    }
+
     // Deploy driver: Sidevm deployer
     await deployDriverContract(api, txqueue, system, sudo, certSudo, contractSidevmop, clusterId, "SidevmOperation");
 
@@ -502,8 +534,13 @@ async function main() {
         sidevmDeployer.tx.allow(defaultTxConfig, loggerId),
         sudo
     );
+    console.log('SideVM: allowing logger contract');
     await checkUntil(
-        async () => (await sidevmDeployer.query['sidevmOperation::canDeploy'](certSudo, {}, loggerId)),
+        async () => {
+            let { output } = await sidevmDeployer.query['sidevmOperation::canDeploy'](certSudo, {}, loggerId);
+            console.log(`${JSON.stringify(output.asOk)}`);
+            return output?.asOk
+        },
         8 * BLOCK_INTERVAL
     );
 
