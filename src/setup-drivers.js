@@ -47,9 +47,9 @@ async function estimateFee(api, system, cert, contract, salt) {
     const queryResponse = api.createType('InkResponse', instantiateReturn);
     const queryResult = queryResponse.result.toHuman()
     // console.log("InkMessageReturn", queryResult.Ok.InkMessageReturn);
-    const instantiateResult = api.createType('ContractInstantiateResult', queryResult.Ok.InkMessageReturn);
-    console.assert(instantiateResult.result.isOk, 'fee estimation failed');
-    return instantiateResult;
+    // const instantiateResult = api.createType('ContractInstantiateResult', queryResult.Ok.result);
+    // console.assert(instantiateResult.result.isOk, 'fee estimation failed');
+    return instantiateReturn;
 }
 
 async function deployContract(api, txqueue, system, pair, cert, contract, clusterId, salt) {
@@ -57,7 +57,7 @@ async function deployContract(api, txqueue, system, pair, cert, contract, cluste
 
     // upload the contract
     await txqueue.submit(
-        api.tx.phalaFatContracts.clusterUploadResource(clusterId, 'InkCode', contract.wasm),
+        api.tx.phalaPhatContracts.clusterUploadResource(clusterId, 'InkCode', contract.wasm),
         pair);
 
     // Not sure how much time it would take to sync the code into pruntime
@@ -80,7 +80,7 @@ async function deployContract(api, txqueue, system, pair, cert, contract, cluste
             storage_deposit_limit: Option<u128>,
         ) -> DispatchResult {
         */
-        api.tx.phalaFatContracts.instantiateContract(
+        api.tx.phalaPhatContracts.instantiateContract(
             { WasmCode: contract.metadata.source.hash },
             contract.constructor,
             salt,
@@ -94,13 +94,13 @@ async function deployContract(api, txqueue, system, pair, cert, contract, cluste
         pair
     );
     const contractIds = deployEvents
-        .filter(ev => ev.event.section == 'phalaFatContracts' && ev.event.method == 'Instantiating')
+        .filter(ev => ev.event.section == 'phalaPhatContracts' && ev.event.method == 'Instantiating')
         .map(ev => ev.event.data[0].toString());
     const numContracts = 1;
     console.assert(contractIds.length == numContracts, 'Incorrect length:', `${contractIds.length} vs ${numContracts}`);
     contract.address = contractIds[0];
     await checkUntilEq(
-        async () => (await api.query.phalaFatContracts.clusterContracts(clusterId))
+        async () => (await api.query.phalaPhatContracts.clusterContracts(clusterId))
             .filter(c => contractIds.includes(c.toString()))
             .length,
         numContracts,
@@ -155,7 +155,7 @@ async function deployDriverContract(api, txqueue, system, pair, cert, contract, 
 async function uploadSystemCode(api, txqueue, pair, wasm) {
     console.log(`Uploading system code`);
     await txqueue.submit(
-        api.tx.sudo.sudo(api.tx.phalaFatContracts.setPinkSystemCode(hex(wasm))),
+        api.tx.sudo.sudo(api.tx.phalaPhatContracts.setPinkSystemCode(hex(wasm))),
         pair
     );
     console.log(`Uploaded system code`);
@@ -310,14 +310,14 @@ async function setupGatekeeper(api, txpool, pair, worker) {
 }
 
 async function deployCluster(api, txqueue, sudoer, owner, workers, treasury, defaultCluster = '0x0000000000000000000000000000000000000000000000000000000000000000') {
-    const clusterInfo = await api.query.phalaFatContracts.clusters(defaultCluster);
+    const clusterInfo = await api.query.phalaPhatContracts.clusters(defaultCluster);
     if (clusterInfo.isSome) {
         return { clusterId: defaultCluster, systemContract: clusterInfo.unwrap().systemContract.toHex() };
     }
     console.log('Cluster: creating');
     // crete contract cluster and wait for the setup
     const { events } = await txqueue.submit(
-        api.tx.sudo.sudo(api.tx.phalaFatContracts.addCluster(
+        api.tx.sudo.sudo(api.tx.phalaPhatContracts.addCluster(
             owner,
             'Public', // can be {'OnlyOwner': accountId}
             workers,
@@ -327,7 +327,7 @@ async function deployCluster(api, txqueue, sudoer, owner, workers, treasury, def
         sudoer
     );
     const ev = events[1].event;
-    console.assert(ev.section == 'phalaFatContracts' && ev.method == 'ClusterCreated');
+    console.assert(ev.section == 'phalaPhatContracts' && ev.method == 'ClusterCreated');
     const clusterId = ev.data[0].toString();
     const systemContract = ev.data[1].toString();
     console.log('Cluster: created on chain', clusterId);
@@ -455,7 +455,7 @@ async function main() {
 
     // Transfer some tokens to the cluster for owner
     await txqueue.submit(
-        api.tx.phalaFatContracts.transferToCluster(CENTS * 100, clusterId, sudo.address),
+        api.tx.phalaPhatContracts.transferToCluster(CENTS * 100, clusterId, sudo.address),
         sudo,
     );
 
@@ -465,7 +465,7 @@ async function main() {
     // Stake some tokens to the system contract
     const stakedCents = 42;
     await txqueue.submit(
-        api.tx.phalaFatTokenomic.adjustStake(systemContract, CENTS * stakedCents),
+        api.tx.phalaPhatTokenomic.adjustStake(systemContract, CENTS * stakedCents),
         sudo
     );
     // Contract weight should be affected
@@ -479,11 +479,11 @@ async function main() {
     );
 
     // Total stakes to the contract should be changed
-    const total = await api.query.phalaFatTokenomic.contractTotalStakes(systemContract);
+    const total = await api.query.phalaPhatTokenomic.contractTotalStakes(systemContract);
     console.assert(total.eq(CENTS * stakedCents), "total stake does not match");
 
     // Stakes of the user
-    const stakesOfOwner = await api.query.phalaFatTokenomic.contractUserStakes.entries(sudo.address);
+    const stakesOfOwner = await api.query.phalaPhatTokenomic.contractUserStakes.entries(sudo.address);
     console.log('Stakes of cluster owner:');
     stakesOfOwner.forEach(([key, stake]) => {
         console.log('contract:', key.args[1].toHex());
@@ -497,7 +497,7 @@ async function main() {
         console.log(`Driver JsDelegate exists in ${contractQjs.address}`);
     } else {
         console.log('Waiting the qjs to be synced into pruntime');
-        await txqueue.submit(api.tx.phalaFatContracts.clusterUploadResource(clusterId, 'IndeterministicInkCode', contractQjs.wasm), sudo);
+        await txqueue.submit(api.tx.phalaPhatContracts.clusterUploadResource(clusterId, 'IndeterministicInkCode', contractQjs.wasm), sudo);
         console.log(`Set JsDelegate code`);
         await txqueue.submit(
             system.tx["system::setDriver"]({ gasLimit: "10000000000000" }, 'JsDelegate', contractQjs.metadata.source.hash),
@@ -546,7 +546,7 @@ async function main() {
 
     // Upload the logger's sidevm wasm code
     await txqueue.submit(
-        api.tx.phalaFatContracts.clusterUploadResource(clusterId, 'SidevmCode', hex(logServerSidevmWasm)),
+        api.tx.phalaPhatContracts.clusterUploadResource(clusterId, 'SidevmCode', hex(logServerSidevmWasm)),
         sudo);
 
     // Deploy the logger contract
