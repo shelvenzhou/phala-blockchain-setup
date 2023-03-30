@@ -41,6 +41,7 @@ async function estimateFee(api, system, cert, contract, salt) {
         instantiateData: contract.constructor, // please concat with args if needed
         deposit: 0,
         transfer: 0,
+        estimating: true
     }, cert);
 
     // console.log("instantiate result:", instantiateReturn);
@@ -89,8 +90,7 @@ async function deployContract(api, txqueue, system, pair, cert, contract, cluste
             estimatedFee.gasRequired.refTime,
             estimatedFee.storageDeposit.asCharge || 0,
             0,
-        )
-        ,
+        ),
         pair
     );
     const contractIds = deployEvents
@@ -158,6 +158,10 @@ async function uploadSystemCode(api, txqueue, pair, wasm) {
         api.tx.sudo.sudo(api.tx.phalaPhatContracts.setPinkSystemCode(hex(wasm))),
         pair
     );
+    await checkUntil(async () => {
+        let code = await api.query.phalaPhatContracts.pinkSystemCode();
+        return code[1] == wasm;
+    }, 8 * BLOCK_INTERVAL);
     console.log(`Uploaded system code`);
 }
 
@@ -538,8 +542,7 @@ async function main() {
     await checkUntil(
         async () => {
             let { output } = await sidevmDeployer.query['sidevmOperation::canDeploy'](certSudo, {}, loggerId);
-            console.log(`${JSON.stringify(output.asOk)}`);
-            return output?.asOk
+            return output.isTrue
         },
         8 * BLOCK_INTERVAL
     );
@@ -548,6 +551,8 @@ async function main() {
     await txqueue.submit(
         api.tx.phalaPhatContracts.clusterUploadResource(clusterId, 'SidevmCode', hex(logServerSidevmWasm)),
         sudo);
+    console.log('Waiting the code to be synced into pruntime');
+    await sleep(10000);
 
     // Deploy the logger contract
     await deployDriverContract(api, txqueue, system, sudo, certSudo, contractLogServer, clusterId, "PinkLogger", salt);
