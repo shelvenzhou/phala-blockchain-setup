@@ -313,7 +313,7 @@ async function setupGatekeeper(api, txpool, pair, worker) {
     console.log('Gatekeeper: master key ready');
 }
 
-async function deployCluster(api, txqueue, sudoer, owner, workers, treasury, defaultCluster = '0x0000000000000000000000000000000000000000000000000000000000000000') {
+async function deployCluster(api, txqueue, sudoer, owner, workers, treasury, defaultCluster = '0x0000000000000000000000000000000000000000000000000000000000000001') {
     const clusterInfo = await api.query.phalaPhatContracts.clusters(defaultCluster);
     if (clusterInfo.isSome) {
         return { clusterId: defaultCluster, systemContract: clusterInfo.unwrap().systemContract.toHex() };
@@ -542,7 +542,7 @@ async function main() {
     await checkUntil(
         async () => {
             let { output } = await sidevmDeployer.query['sidevmOperation::canDeploy'](certSudo, {}, loggerId);
-            return output.isTrue
+            return output.asOk;
         },
         8 * BLOCK_INTERVAL
     );
