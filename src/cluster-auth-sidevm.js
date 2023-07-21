@@ -173,7 +173,7 @@ function hex(b) {
     }
 }
 
-async function deployCluster(api, txqueue, sudoer, owner, workers, defaultCluster = '0x0000000000000000000000000000000000000000000000000000000000000000') {
+async function deployCluster(api, txqueue, sudoer, owner, workers, defaultCluster = '0x0000000000000000000000000000000000000000000000000000000000000001') {
     const clusterInfo = await api.query.phalaFatContracts.clusters(defaultCluster);
     if (clusterInfo.isSome) {
         return { clusterId: defaultCluster, systemContract: clusterInfo.unwrap().systemContract.toHex() };

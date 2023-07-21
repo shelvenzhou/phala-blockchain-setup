@@ -59,7 +59,7 @@ async function getLogs(api, logger, cert, from) {
 
 async function main() {
     const nodeUrl = process.env.ENDPOINT || 'wss://poc5.phala.network/ws';
-    const clusterId = process.env.CLUSTER || '0x0000000000000000000000000000000000000000000000000000000000000000';
+    const clusterId = process.env.CLUSTER || '0x0000000000000000000000000000000000000000000000000000000000000001';
     const pruntimeUrl = process.env.WORKERS;
     // const contractId = '0x7cf778c0a9d293d75a1991fbf0ab0ef687f390767e52a076d44f8be266d51011';
 

@@ -21,7 +21,7 @@ This will
 - Register the Workers and setup their endpoints;
 - Register the Gatekeepers;
 - Upload the System contract code in the `res/` folder;
-- Create Cluster 0x0 with `Alice` as the owner and the System contract above;
+- Create Cluster 0x01 with `Alice` as the owner and the System contract above;
 - Register two Drivers to the System contract
   - the log server printing all the Phat contracts' log;
   - the SideVM deployer controlling which contracts can start the SideVM;
