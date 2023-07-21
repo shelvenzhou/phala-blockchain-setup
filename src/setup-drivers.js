@@ -422,26 +422,28 @@ async function main() {
             api: api,
         };
     }));
-    const gatekeepers = await Promise.all(gatekeeperUrls.map(async w => {
-        let api = new PRuntimeApi(w);
-        let pubkey = hex((await api.getInfo()).publicKey);
-        return {
-            url: w,
-            pubkey: pubkey,
-            api: api,
-        };
-    }));
     console.log('Workers:', workers);
-    console.log('Gatekeepers', gatekeepers);
 
     // Basic phala network setup
     for (const w of workers) {
         await forceRegisterWorker(api, txqueue, sudo, w.pubkey);
         await w.api.addEndpoint({ encodedEndpointType: [1], endpoint: w.url }); // EndpointType: 0 for I2P and 1 for HTTP
     }
-    for (const w of gatekeepers) {
-        await forceRegisterWorker(api, txqueue, sudo, w.pubkey);
-        await setupGatekeeper(api, txqueue, sudo, w.pubkey);
+    if (gatekeeperUrls) {
+        const gatekeepers = await Promise.all(gatekeeperUrls.map(async w => {
+            let api = new PRuntimeApi(w);
+            let pubkey = hex((await api.getInfo()).publicKey);
+            return {
+                url: w,
+                pubkey: pubkey,
+                api: api,
+            };
+        }));
+        console.log('Gatekeepers', gatekeepers);
+        for (const w of gatekeepers) {
+            await forceRegisterWorker(api, txqueue, sudo, w.pubkey);
+            await setupGatekeeper(api, txqueue, sudo, w.pubkey);
+        }
     }
 
     // Upload the pink-system wasm to the chain. It is required to create a cluster.
