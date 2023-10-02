@@ -7,7 +7,7 @@ const fs = require('fs');
 
 function loadContractFile(contractFile) {
     const metadata = JSON.parse(fs.readFileSync(contractFile));
-    const constructor = metadata.V3.spec.constructors.find(c => c.label == 'default').selector;
+    const constructor = metadata.spec.constructors.find(c => c.label == 'default').selector;
     const name = metadata.contract.name;
     const wasm = metadata.source.wasm;
     return { wasm, metadata, constructor, name };
@@ -24,7 +24,7 @@ function hex(b) {
     }
 }
 
-async function contractApi(api, pruntimeUrl, contract, contractId) {    
+async function contractApi(api, pruntimeUrl, contract, contractId) {
     const newApi = await api.clone().isReady;
     const phala = await Phala.create({ api: newApi, baseURL: pruntimeUrl, contractId });
     const contractApi = new ContractPromise(
@@ -88,9 +88,9 @@ async function main() {
     const loggerLookup = await system.query["system::getDriver"](certAlice, {}, 'PinkLogger');
     const loggerId = loggerLookup.output.unwrap().toHex();
     console.log('Contract found', {loggerId});
-    
+
     const logger = await contractApi(api, pruntimeUrl, contractLogServer, loggerId);
-    
+
     let from = 0;
     let fullLog = [];
     while (true) {
