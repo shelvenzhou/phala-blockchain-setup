@@ -1,4 +1,5 @@
 import * as $protobuf from "protobufjs";
+import Long = require("long");
 /** Namespace pruntime_rpc. */
 export namespace pruntime_rpc {
 
@@ -385,6 +386,146 @@ export namespace pruntime_rpc {
          * @returns Promise
          */
         public calculateContractId(request: pruntime_rpc.IContractParameters): Promise<pruntime_rpc.ContractId>;
+
+        /**
+         * Calls GetNetworkConfig.
+         * @param request Empty message or plain object
+         * @param callback Node-style callback called with the error, if any, and NetworkConfigResponse
+         */
+        public getNetworkConfig(request: google.protobuf.IEmpty, callback: pruntime_rpc.PhactoryAPI.GetNetworkConfigCallback): void;
+
+        /**
+         * Calls GetNetworkConfig.
+         * @param request Empty message or plain object
+         * @returns Promise
+         */
+        public getNetworkConfig(request: google.protobuf.IEmpty): Promise<pruntime_rpc.NetworkConfigResponse>;
+
+        /**
+         * Calls LoadChainState.
+         * @param request ChainState message or plain object
+         * @param callback Node-style callback called with the error, if any, and Empty
+         */
+        public loadChainState(request: pruntime_rpc.IChainState, callback: pruntime_rpc.PhactoryAPI.LoadChainStateCallback): void;
+
+        /**
+         * Calls LoadChainState.
+         * @param request ChainState message or plain object
+         * @returns Promise
+         */
+        public loadChainState(request: pruntime_rpc.IChainState): Promise<google.protobuf.Empty>;
+
+        /**
+         * Calls Stop.
+         * @param request StopOptions message or plain object
+         * @param callback Node-style callback called with the error, if any, and Empty
+         */
+        public stop(request: pruntime_rpc.IStopOptions, callback: pruntime_rpc.PhactoryAPI.StopCallback): void;
+
+        /**
+         * Calls Stop.
+         * @param request StopOptions message or plain object
+         * @returns Promise
+         */
+        public stop(request: pruntime_rpc.IStopOptions): Promise<google.protobuf.Empty>;
+
+        /**
+         * Calls LoadStorageProof.
+         * @param request StorageProof message or plain object
+         * @param callback Node-style callback called with the error, if any, and Empty
+         */
+        public loadStorageProof(request: pruntime_rpc.IStorageProof, callback: pruntime_rpc.PhactoryAPI.LoadStorageProofCallback): void;
+
+        /**
+         * Calls LoadStorageProof.
+         * @param request StorageProof message or plain object
+         * @returns Promise
+         */
+        public loadStorageProof(request: pruntime_rpc.IStorageProof): Promise<google.protobuf.Empty>;
+
+        /**
+         * Calls TakeCheckpoint.
+         * @param request Empty message or plain object
+         * @param callback Node-style callback called with the error, if any, and SyncedTo
+         */
+        public takeCheckpoint(request: google.protobuf.IEmpty, callback: pruntime_rpc.PhactoryAPI.TakeCheckpointCallback): void;
+
+        /**
+         * Calls TakeCheckpoint.
+         * @param request Empty message or plain object
+         * @returns Promise
+         */
+        public takeCheckpoint(request: google.protobuf.IEmpty): Promise<pruntime_rpc.SyncedTo>;
+
+        /**
+         * Calls Statistics.
+         * @param request StatisticsReqeust message or plain object
+         * @param callback Node-style callback called with the error, if any, and StatisticsResponse
+         */
+        public statistics(request: pruntime_rpc.IStatisticsReqeust, callback: pruntime_rpc.PhactoryAPI.StatisticsCallback): void;
+
+        /**
+         * Calls Statistics.
+         * @param request StatisticsReqeust message or plain object
+         * @returns Promise
+         */
+        public statistics(request: pruntime_rpc.IStatisticsReqeust): Promise<pruntime_rpc.StatisticsResponse>;
+
+        /**
+         * Calls GenerateClusterStateRequest.
+         * @param request Empty message or plain object
+         * @param callback Node-style callback called with the error, if any, and SaveClusterStateArguments
+         */
+        public generateClusterStateRequest(request: google.protobuf.IEmpty, callback: pruntime_rpc.PhactoryAPI.GenerateClusterStateRequestCallback): void;
+
+        /**
+         * Calls GenerateClusterStateRequest.
+         * @param request Empty message or plain object
+         * @returns Promise
+         */
+        public generateClusterStateRequest(request: google.protobuf.IEmpty): Promise<pruntime_rpc.SaveClusterStateArguments>;
+
+        /**
+         * Calls SaveClusterState.
+         * @param request SaveClusterStateArguments message or plain object
+         * @param callback Node-style callback called with the error, if any, and SaveClusterStateResponse
+         */
+        public saveClusterState(request: pruntime_rpc.ISaveClusterStateArguments, callback: pruntime_rpc.PhactoryAPI.SaveClusterStateCallback): void;
+
+        /**
+         * Calls SaveClusterState.
+         * @param request SaveClusterStateArguments message or plain object
+         * @returns Promise
+         */
+        public saveClusterState(request: pruntime_rpc.ISaveClusterStateArguments): Promise<pruntime_rpc.SaveClusterStateResponse>;
+
+        /**
+         * Calls LoadClusterState.
+         * @param request SaveClusterStateResponse message or plain object
+         * @param callback Node-style callback called with the error, if any, and Empty
+         */
+        public loadClusterState(request: pruntime_rpc.ISaveClusterStateResponse, callback: pruntime_rpc.PhactoryAPI.LoadClusterStateCallback): void;
+
+        /**
+         * Calls LoadClusterState.
+         * @param request SaveClusterStateResponse message or plain object
+         * @returns Promise
+         */
+        public loadClusterState(request: pruntime_rpc.ISaveClusterStateResponse): Promise<google.protobuf.Empty>;
+
+        /**
+         * Calls TryUpgradePinkRuntime.
+         * @param request PinkRuntimeVersion message or plain object
+         * @param callback Node-style callback called with the error, if any, and Empty
+         */
+        public tryUpgradePinkRuntime(request: pruntime_rpc.IPinkRuntimeVersion, callback: pruntime_rpc.PhactoryAPI.TryUpgradePinkRuntimeCallback): void;
+
+        /**
+         * Calls TryUpgradePinkRuntime.
+         * @param request PinkRuntimeVersion message or plain object
+         * @returns Promise
+         */
+        public tryUpgradePinkRuntime(request: pruntime_rpc.IPinkRuntimeVersion): Promise<google.protobuf.Empty>;
     }
 
     namespace PhactoryAPI {
@@ -570,6 +711,76 @@ export namespace pruntime_rpc {
          * @param [response] ContractId
          */
         type CalculateContractIdCallback = (error: (Error|null), response?: pruntime_rpc.ContractId) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#getNetworkConfig}.
+         * @param error Error, if any
+         * @param [response] NetworkConfigResponse
+         */
+        type GetNetworkConfigCallback = (error: (Error|null), response?: pruntime_rpc.NetworkConfigResponse) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#loadChainState}.
+         * @param error Error, if any
+         * @param [response] Empty
+         */
+        type LoadChainStateCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#stop}.
+         * @param error Error, if any
+         * @param [response] Empty
+         */
+        type StopCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#loadStorageProof}.
+         * @param error Error, if any
+         * @param [response] Empty
+         */
+        type LoadStorageProofCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#takeCheckpoint}.
+         * @param error Error, if any
+         * @param [response] SyncedTo
+         */
+        type TakeCheckpointCallback = (error: (Error|null), response?: pruntime_rpc.SyncedTo) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#statistics}.
+         * @param error Error, if any
+         * @param [response] StatisticsResponse
+         */
+        type StatisticsCallback = (error: (Error|null), response?: pruntime_rpc.StatisticsResponse) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#generateClusterStateRequest}.
+         * @param error Error, if any
+         * @param [response] SaveClusterStateArguments
+         */
+        type GenerateClusterStateRequestCallback = (error: (Error|null), response?: pruntime_rpc.SaveClusterStateArguments) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#saveClusterState}.
+         * @param error Error, if any
+         * @param [response] SaveClusterStateResponse
+         */
+        type SaveClusterStateCallback = (error: (Error|null), response?: pruntime_rpc.SaveClusterStateResponse) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#loadClusterState}.
+         * @param error Error, if any
+         * @param [response] Empty
+         */
+        type LoadClusterStateCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
+
+        /**
+         * Callback as used by {@link pruntime_rpc.PhactoryAPI#tryUpgradePinkRuntime}.
+         * @param error Error, if any
+         * @param [response] Empty
+         */
+        type TryUpgradePinkRuntimeCallback = (error: (Error|null), response?: google.protobuf.Empty) => void;
     }
 
     /** Properties of a PhactoryInfo. */
@@ -626,11 +837,20 @@ export namespace pruntime_rpc {
         /** PhactoryInfo waitingForParaheaders */
         waitingForParaheaders?: (boolean|null);
 
-        /** PhactoryInfo networkStatus */
-        networkStatus?: (pruntime_rpc.INetworkStatus|null);
-
         /** PhactoryInfo system */
         system?: (pruntime_rpc.ISystemInfo|null);
+
+        /** PhactoryInfo canLoadChainState */
+        canLoadChainState?: (boolean|null);
+
+        /** PhactoryInfo safeModeLevel */
+        safeModeLevel?: (number|null);
+
+        /** PhactoryInfo currentBlockTime */
+        currentBlockTime?: (number|Long|null);
+
+        /** PhactoryInfo maxSupportedPinkRuntimeVersion */
+        maxSupportedPinkRuntimeVersion?: (string|null);
     }
 
     /** Represents a PhactoryInfo. */
@@ -693,11 +913,20 @@ export namespace pruntime_rpc {
         /** PhactoryInfo waitingForParaheaders. */
         public waitingForParaheaders: boolean;
 
-        /** PhactoryInfo networkStatus. */
-        public networkStatus?: (pruntime_rpc.INetworkStatus|null);
-
         /** PhactoryInfo system. */
         public system?: (pruntime_rpc.ISystemInfo|null);
+
+        /** PhactoryInfo canLoadChainState. */
+        public canLoadChainState: boolean;
+
+        /** PhactoryInfo safeModeLevel. */
+        public safeModeLevel: number;
+
+        /** PhactoryInfo currentBlockTime. */
+        public currentBlockTime: (number|Long);
+
+        /** PhactoryInfo maxSupportedPinkRuntimeVersion. */
+        public maxSupportedPinkRuntimeVersion: string;
 
         /** PhactoryInfo _genesisBlockHash. */
         public _genesisBlockHash?: "genesisBlockHash";
@@ -777,6 +1006,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PhactoryInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SystemInfo. */
@@ -800,11 +1036,11 @@ export namespace pruntime_rpc {
         /** SystemInfo numberOfContracts */
         numberOfContracts?: (number|Long|null);
 
-        /** SystemInfo consensusVersion */
-        consensusVersion?: (number|null);
-
         /** SystemInfo maxSupportedConsensusVersion */
         maxSupportedConsensusVersion?: (number|null);
+
+        /** SystemInfo genesisBlock */
+        genesisBlock?: (number|null);
     }
 
     /** Represents a SystemInfo. */
@@ -834,11 +1070,11 @@ export namespace pruntime_rpc {
         /** SystemInfo numberOfContracts. */
         public numberOfContracts: (number|Long);
 
-        /** SystemInfo consensusVersion. */
-        public consensusVersion: number;
-
         /** SystemInfo maxSupportedConsensusVersion. */
         public maxSupportedConsensusVersion: number;
+
+        /** SystemInfo genesisBlock. */
+        public genesisBlock: number;
 
         /**
          * Creates a new SystemInfo instance using the specified properties.
@@ -909,6 +1145,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SystemInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** GatekeeperRole enum. */
@@ -1012,6 +1255,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GatekeeperStatus
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a MemoryUsage. */
@@ -1025,6 +1275,12 @@ export namespace pruntime_rpc {
 
         /** MemoryUsage totalPeakUsed */
         totalPeakUsed?: (number|Long|null);
+
+        /** MemoryUsage free */
+        free?: (number|Long|null);
+
+        /** MemoryUsage rustSpike */
+        rustSpike?: (number|Long|null);
     }
 
     /** Represents a MemoryUsage. */
@@ -1044,6 +1300,12 @@ export namespace pruntime_rpc {
 
         /** MemoryUsage totalPeakUsed. */
         public totalPeakUsed: (number|Long);
+
+        /** MemoryUsage free. */
+        public free: (number|Long);
+
+        /** MemoryUsage rustSpike. */
+        public rustSpike: (number|Long);
 
         /**
          * Creates a new MemoryUsage instance using the specified properties.
@@ -1114,6 +1376,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for MemoryUsage
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SyncedTo. */
@@ -1204,6 +1473,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SyncedTo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HeadersToSync. */
@@ -1303,6 +1579,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HeadersToSync
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ParaHeadersToSync. */
@@ -1399,6 +1682,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ParaHeadersToSync
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a CombinedHeadersToSync. */
@@ -1510,6 +1800,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for CombinedHeadersToSync
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HeadersSyncedTo. */
@@ -1606,6 +1903,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HeadersSyncedTo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Blocks. */
@@ -1696,6 +2000,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Blocks
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an InitRuntimeRequest. */
@@ -1831,6 +2142,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for InitRuntimeRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetRuntimeInfoRequest. */
@@ -1930,6 +2248,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetRuntimeInfoRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an InitRuntimeResponse. */
@@ -2047,6 +2372,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for InitRuntimeResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an Attestation. */
@@ -2161,6 +2493,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Attestation
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an AttestationReport. */
@@ -2263,6 +2602,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AttestationReport
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetEgressMessagesResponse. */
@@ -2353,6 +2699,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetEgressMessagesResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ContractQueryRequest. */
@@ -2449,6 +2802,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ContractQueryRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Signature. */
@@ -2551,6 +2911,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Signature
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a Certificate. */
@@ -2647,6 +3014,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for Certificate
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** SignatureType enum. */
@@ -2656,7 +3030,8 @@ export namespace pruntime_rpc {
         Ecdsa = 2,
         Ed25519WrapBytes = 3,
         Sr25519WrapBytes = 4,
-        EcdsaWrapBytes = 5
+        EcdsaWrapBytes = 5,
+        Eip712 = 6
     }
 
     /** Properties of a ContractQueryResponse. */
@@ -2747,6 +3122,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ContractQueryResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetWorkerStateRequest. */
@@ -2837,6 +3219,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetWorkerStateRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a WorkerStat. */
@@ -2945,6 +3334,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkerStat
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a WorkerState. */
@@ -2959,8 +3355,8 @@ export namespace pruntime_rpc {
         /** WorkerState benchState */
         benchState?: (pruntime_rpc.IBenchState|null);
 
-        /** WorkerState miningState */
-        miningState?: (pruntime_rpc.IMiningState|null);
+        /** WorkerState workingState */
+        workingState?: (pruntime_rpc.IWorkingState|null);
 
         /** WorkerState waitingHeartbeats */
         waitingHeartbeats?: (number[]|null);
@@ -2990,8 +3386,8 @@ export namespace pruntime_rpc {
         /** WorkerState benchState. */
         public benchState?: (pruntime_rpc.IBenchState|null);
 
-        /** WorkerState miningState. */
-        public miningState?: (pruntime_rpc.IMiningState|null);
+        /** WorkerState workingState. */
+        public workingState?: (pruntime_rpc.IWorkingState|null);
 
         /** WorkerState waitingHeartbeats. */
         public waitingHeartbeats: number[];
@@ -3071,6 +3467,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkerState
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HandoverChallenge. */
@@ -3161,6 +3564,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HandoverChallenge
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HandoverChallengeResponse. */
@@ -3257,6 +3667,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HandoverChallengeResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HandoverWorkerKey. */
@@ -3353,6 +3770,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HandoverWorkerKey
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a BenchState. */
@@ -3455,108 +3879,122 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for BenchState
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** Properties of a MiningState. */
-    interface IMiningState {
+    /** Properties of a WorkingState. */
+    interface IWorkingState {
 
-        /** MiningState sessionId */
+        /** WorkingState sessionId */
         sessionId?: (number|null);
 
-        /** MiningState paused */
+        /** WorkingState paused */
         paused?: (boolean|null);
 
-        /** MiningState startTime */
+        /** WorkingState startTime */
         startTime?: (number|Long|null);
     }
 
-    /** Represents a MiningState. */
-    class MiningState implements IMiningState {
+    /** Represents a WorkingState. */
+    class WorkingState implements IWorkingState {
 
         /**
-         * Constructs a new MiningState.
+         * Constructs a new WorkingState.
          * @param [properties] Properties to set
          */
-        constructor(properties?: pruntime_rpc.IMiningState);
+        constructor(properties?: pruntime_rpc.IWorkingState);
 
-        /** MiningState sessionId. */
+        /** WorkingState sessionId. */
         public sessionId: number;
 
-        /** MiningState paused. */
+        /** WorkingState paused. */
         public paused: boolean;
 
-        /** MiningState startTime. */
+        /** WorkingState startTime. */
         public startTime: (number|Long);
 
         /**
-         * Creates a new MiningState instance using the specified properties.
+         * Creates a new WorkingState instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns MiningState instance
+         * @returns WorkingState instance
          */
-        public static create(properties?: pruntime_rpc.IMiningState): pruntime_rpc.MiningState;
+        public static create(properties?: pruntime_rpc.IWorkingState): pruntime_rpc.WorkingState;
 
         /**
-         * Encodes the specified MiningState message. Does not implicitly {@link pruntime_rpc.MiningState.verify|verify} messages.
-         * @param message MiningState message or plain object to encode
+         * Encodes the specified WorkingState message. Does not implicitly {@link pruntime_rpc.WorkingState.verify|verify} messages.
+         * @param message WorkingState message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: pruntime_rpc.IMiningState, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: pruntime_rpc.IWorkingState, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified MiningState message, length delimited. Does not implicitly {@link pruntime_rpc.MiningState.verify|verify} messages.
-         * @param message MiningState message or plain object to encode
+         * Encodes the specified WorkingState message, length delimited. Does not implicitly {@link pruntime_rpc.WorkingState.verify|verify} messages.
+         * @param message WorkingState message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: pruntime_rpc.IMiningState, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: pruntime_rpc.IWorkingState, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a MiningState message from the specified reader or buffer.
+         * Decodes a WorkingState message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns MiningState
+         * @returns WorkingState
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.MiningState;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.WorkingState;
 
         /**
-         * Decodes a MiningState message from the specified reader or buffer, length delimited.
+         * Decodes a WorkingState message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns MiningState
+         * @returns WorkingState
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.MiningState;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.WorkingState;
 
         /**
-         * Verifies a MiningState message.
+         * Verifies a WorkingState message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a MiningState message from a plain object. Also converts values to their respective internal types.
+         * Creates a WorkingState message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns MiningState
+         * @returns WorkingState
          */
-        public static fromObject(object: { [k: string]: any }): pruntime_rpc.MiningState;
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.WorkingState;
 
         /**
-         * Creates a plain object from a MiningState message. Also converts values to other types if specified.
-         * @param message MiningState
+         * Creates a plain object from a WorkingState message. Also converts values to other types if specified.
+         * @param message WorkingState
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: pruntime_rpc.MiningState, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: pruntime_rpc.WorkingState, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this MiningState to JSON.
+         * Converts this WorkingState to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for WorkingState
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of an EchoMessage. */
@@ -3647,6 +4085,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for EchoMessage
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** ResponsiveEvent enum. */
@@ -3750,6 +4195,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AddEndpointRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetEndpointResponse. */
@@ -3852,6 +4304,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetEndpointResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SignEndpointsRequest. */
@@ -3942,6 +4401,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SignEndpointsRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a DerivePhalaI2pKeyResponse. */
@@ -4032,6 +4498,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for DerivePhalaI2pKeyResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TokenomicStat. */
@@ -4164,6 +4637,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TokenomicStat
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a TokenomicInfo. */
@@ -4320,108 +4800,122 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for TokenomicInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** Properties of a NetworkStatus. */
-    interface INetworkStatus {
+    /** Properties of a NetworkConfigResponse. */
+    interface INetworkConfigResponse {
 
-        /** NetworkStatus publicRpcPort */
+        /** NetworkConfigResponse publicRpcPort */
         publicRpcPort?: (number|null);
 
-        /** NetworkStatus config */
+        /** NetworkConfigResponse config */
         config?: (pruntime_rpc.INetworkConfig|null);
     }
 
-    /** Represents a NetworkStatus. */
-    class NetworkStatus implements INetworkStatus {
+    /** Represents a NetworkConfigResponse. */
+    class NetworkConfigResponse implements INetworkConfigResponse {
 
         /**
-         * Constructs a new NetworkStatus.
+         * Constructs a new NetworkConfigResponse.
          * @param [properties] Properties to set
          */
-        constructor(properties?: pruntime_rpc.INetworkStatus);
+        constructor(properties?: pruntime_rpc.INetworkConfigResponse);
 
-        /** NetworkStatus publicRpcPort. */
+        /** NetworkConfigResponse publicRpcPort. */
         public publicRpcPort?: (number|null);
 
-        /** NetworkStatus config. */
+        /** NetworkConfigResponse config. */
         public config?: (pruntime_rpc.INetworkConfig|null);
 
-        /** NetworkStatus _publicRpcPort. */
+        /** NetworkConfigResponse _publicRpcPort. */
         public _publicRpcPort?: "publicRpcPort";
 
-        /** NetworkStatus _config. */
+        /** NetworkConfigResponse _config. */
         public _config?: "config";
 
         /**
-         * Creates a new NetworkStatus instance using the specified properties.
+         * Creates a new NetworkConfigResponse instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns NetworkStatus instance
+         * @returns NetworkConfigResponse instance
          */
-        public static create(properties?: pruntime_rpc.INetworkStatus): pruntime_rpc.NetworkStatus;
+        public static create(properties?: pruntime_rpc.INetworkConfigResponse): pruntime_rpc.NetworkConfigResponse;
 
         /**
-         * Encodes the specified NetworkStatus message. Does not implicitly {@link pruntime_rpc.NetworkStatus.verify|verify} messages.
-         * @param message NetworkStatus message or plain object to encode
+         * Encodes the specified NetworkConfigResponse message. Does not implicitly {@link pruntime_rpc.NetworkConfigResponse.verify|verify} messages.
+         * @param message NetworkConfigResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: pruntime_rpc.INetworkStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: pruntime_rpc.INetworkConfigResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified NetworkStatus message, length delimited. Does not implicitly {@link pruntime_rpc.NetworkStatus.verify|verify} messages.
-         * @param message NetworkStatus message or plain object to encode
+         * Encodes the specified NetworkConfigResponse message, length delimited. Does not implicitly {@link pruntime_rpc.NetworkConfigResponse.verify|verify} messages.
+         * @param message NetworkConfigResponse message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: pruntime_rpc.INetworkStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: pruntime_rpc.INetworkConfigResponse, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a NetworkStatus message from the specified reader or buffer.
+         * Decodes a NetworkConfigResponse message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns NetworkStatus
+         * @returns NetworkConfigResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.NetworkStatus;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.NetworkConfigResponse;
 
         /**
-         * Decodes a NetworkStatus message from the specified reader or buffer, length delimited.
+         * Decodes a NetworkConfigResponse message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns NetworkStatus
+         * @returns NetworkConfigResponse
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.NetworkStatus;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.NetworkConfigResponse;
 
         /**
-         * Verifies a NetworkStatus message.
+         * Verifies a NetworkConfigResponse message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a NetworkStatus message from a plain object. Also converts values to their respective internal types.
+         * Creates a NetworkConfigResponse message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns NetworkStatus
+         * @returns NetworkConfigResponse
          */
-        public static fromObject(object: { [k: string]: any }): pruntime_rpc.NetworkStatus;
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.NetworkConfigResponse;
 
         /**
-         * Creates a plain object from a NetworkStatus message. Also converts values to other types if specified.
-         * @param message NetworkStatus
+         * Creates a plain object from a NetworkConfigResponse message. Also converts values to other types if specified.
+         * @param message NetworkConfigResponse
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: pruntime_rpc.NetworkStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: pruntime_rpc.NetworkConfigResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this NetworkStatus to JSON.
+         * Converts this NetworkConfigResponse to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NetworkConfigResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a NetworkConfig. */
@@ -4518,6 +5012,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for NetworkConfig
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HttpHeader. */
@@ -4614,6 +5115,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpHeader
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HttpRequest. */
@@ -4722,6 +5230,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a HttpResponse. */
@@ -4824,13 +5339,20 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetContractInfoRequest. */
     interface IGetContractInfoRequest {
 
-        /** GetContractInfoRequest contractIds */
-        contractIds?: (string[]|null);
+        /** GetContractInfoRequest contracts */
+        contracts?: (string[]|null);
     }
 
     /** Represents a GetContractInfoRequest. */
@@ -4842,8 +5364,8 @@ export namespace pruntime_rpc {
          */
         constructor(properties?: pruntime_rpc.IGetContractInfoRequest);
 
-        /** GetContractInfoRequest contractIds. */
-        public contractIds: string[];
+        /** GetContractInfoRequest contracts. */
+        public contracts: string[];
 
         /**
          * Creates a new GetContractInfoRequest instance using the specified properties.
@@ -4914,6 +5436,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetContractInfoRequest
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetContractInfoResponse. */
@@ -5004,6 +5533,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetContractInfoResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ContractInfo. */
@@ -5112,6 +5648,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ContractInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SidevmInfo. */
@@ -5220,13 +5763,20 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SidevmInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a GetClusterInfoResponse. */
     interface IGetClusterInfoResponse {
 
-        /** GetClusterInfoResponse clusters */
-        clusters?: (pruntime_rpc.IClusterInfo[]|null);
+        /** GetClusterInfoResponse info */
+        info?: (pruntime_rpc.IClusterInfo|null);
     }
 
     /** Represents a GetClusterInfoResponse. */
@@ -5238,8 +5788,8 @@ export namespace pruntime_rpc {
          */
         constructor(properties?: pruntime_rpc.IGetClusterInfoResponse);
 
-        /** GetClusterInfoResponse clusters. */
-        public clusters: pruntime_rpc.IClusterInfo[];
+        /** GetClusterInfoResponse info. */
+        public info?: (pruntime_rpc.IClusterInfo|null);
 
         /**
          * Creates a new GetClusterInfoResponse instance using the specified properties.
@@ -5310,6 +5860,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for GetClusterInfoResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ClusterInfo. */
@@ -5318,14 +5875,20 @@ export namespace pruntime_rpc {
         /** ClusterInfo id */
         id?: (string|null);
 
-        /** ClusterInfo version */
-        version?: (string|null);
+        /** ClusterInfo runtimeVersion */
+        runtimeVersion?: (string|null);
 
         /** ClusterInfo stateRoot */
         stateRoot?: (string|null);
 
-        /** ClusterInfo contracts */
-        contracts?: (string[]|null);
+        /** ClusterInfo systemContract */
+        systemContract?: (string|null);
+
+        /** ClusterInfo loggerContract */
+        loggerContract?: (string|null);
+
+        /** ClusterInfo numberOfContracts */
+        numberOfContracts?: (number|Long|null);
     }
 
     /** Represents a ClusterInfo. */
@@ -5340,14 +5903,20 @@ export namespace pruntime_rpc {
         /** ClusterInfo id. */
         public id: string;
 
-        /** ClusterInfo version. */
-        public version: string;
+        /** ClusterInfo runtimeVersion. */
+        public runtimeVersion: string;
 
         /** ClusterInfo stateRoot. */
         public stateRoot: string;
 
-        /** ClusterInfo contracts. */
-        public contracts: string[];
+        /** ClusterInfo systemContract. */
+        public systemContract: string;
+
+        /** ClusterInfo loggerContract. */
+        public loggerContract: string;
+
+        /** ClusterInfo numberOfContracts. */
+        public numberOfContracts: (number|Long);
 
         /**
          * Creates a new ClusterInfo instance using the specified properties.
@@ -5418,6 +5987,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ClusterInfo
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a SidevmCode. */
@@ -5514,6 +6090,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SidevmCode
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ContractParameters. */
@@ -5622,6 +6205,13 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ContractParameters
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
     /** Properties of a ContractId. */
@@ -5712,6 +6302,1267 @@ export namespace pruntime_rpc {
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ContractId
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a ChainState. */
+    interface IChainState {
+
+        /** ChainState blockNumber */
+        blockNumber?: (number|null);
+
+        /** ChainState encodedState */
+        encodedState?: (Uint8Array|null);
+    }
+
+    /** Represents a ChainState. */
+    class ChainState implements IChainState {
+
+        /**
+         * Constructs a new ChainState.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IChainState);
+
+        /** ChainState blockNumber. */
+        public blockNumber: number;
+
+        /** ChainState encodedState. */
+        public encodedState: Uint8Array;
+
+        /**
+         * Creates a new ChainState instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns ChainState instance
+         */
+        public static create(properties?: pruntime_rpc.IChainState): pruntime_rpc.ChainState;
+
+        /**
+         * Encodes the specified ChainState message. Does not implicitly {@link pruntime_rpc.ChainState.verify|verify} messages.
+         * @param message ChainState message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IChainState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified ChainState message, length delimited. Does not implicitly {@link pruntime_rpc.ChainState.verify|verify} messages.
+         * @param message ChainState message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IChainState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a ChainState message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns ChainState
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.ChainState;
+
+        /**
+         * Decodes a ChainState message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns ChainState
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.ChainState;
+
+        /**
+         * Verifies a ChainState message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a ChainState message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns ChainState
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.ChainState;
+
+        /**
+         * Creates a plain object from a ChainState message. Also converts values to other types if specified.
+         * @param message ChainState
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.ChainState, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this ChainState to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for ChainState
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a StopOptions. */
+    interface IStopOptions {
+
+        /** StopOptions removeCheckpoints */
+        removeCheckpoints?: (boolean|null);
+    }
+
+    /** Represents a StopOptions. */
+    class StopOptions implements IStopOptions {
+
+        /**
+         * Constructs a new StopOptions.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IStopOptions);
+
+        /** StopOptions removeCheckpoints. */
+        public removeCheckpoints: boolean;
+
+        /**
+         * Creates a new StopOptions instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns StopOptions instance
+         */
+        public static create(properties?: pruntime_rpc.IStopOptions): pruntime_rpc.StopOptions;
+
+        /**
+         * Encodes the specified StopOptions message. Does not implicitly {@link pruntime_rpc.StopOptions.verify|verify} messages.
+         * @param message StopOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IStopOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified StopOptions message, length delimited. Does not implicitly {@link pruntime_rpc.StopOptions.verify|verify} messages.
+         * @param message StopOptions message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IStopOptions, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a StopOptions message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns StopOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.StopOptions;
+
+        /**
+         * Decodes a StopOptions message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns StopOptions
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.StopOptions;
+
+        /**
+         * Verifies a StopOptions message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a StopOptions message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns StopOptions
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.StopOptions;
+
+        /**
+         * Creates a plain object from a StopOptions message. Also converts values to other types if specified.
+         * @param message StopOptions
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.StopOptions, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this StopOptions to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for StopOptions
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a StorageProof. */
+    interface IStorageProof {
+
+        /** StorageProof proof */
+        proof?: (Uint8Array[]|null);
+    }
+
+    /** Represents a StorageProof. */
+    class StorageProof implements IStorageProof {
+
+        /**
+         * Constructs a new StorageProof.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IStorageProof);
+
+        /** StorageProof proof. */
+        public proof: Uint8Array[];
+
+        /**
+         * Creates a new StorageProof instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns StorageProof instance
+         */
+        public static create(properties?: pruntime_rpc.IStorageProof): pruntime_rpc.StorageProof;
+
+        /**
+         * Encodes the specified StorageProof message. Does not implicitly {@link pruntime_rpc.StorageProof.verify|verify} messages.
+         * @param message StorageProof message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IStorageProof, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified StorageProof message, length delimited. Does not implicitly {@link pruntime_rpc.StorageProof.verify|verify} messages.
+         * @param message StorageProof message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IStorageProof, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a StorageProof message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns StorageProof
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.StorageProof;
+
+        /**
+         * Decodes a StorageProof message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns StorageProof
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.StorageProof;
+
+        /**
+         * Verifies a StorageProof message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a StorageProof message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns StorageProof
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.StorageProof;
+
+        /**
+         * Creates a plain object from a StorageProof message. Also converts values to other types if specified.
+         * @param message StorageProof
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.StorageProof, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this StorageProof to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for StorageProof
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a StatisticsReqeust. */
+    interface IStatisticsReqeust {
+
+        /** StatisticsReqeust contracts */
+        contracts?: (string[]|null);
+
+        /** StatisticsReqeust all */
+        all?: (boolean|null);
+    }
+
+    /** Represents a StatisticsReqeust. */
+    class StatisticsReqeust implements IStatisticsReqeust {
+
+        /**
+         * Constructs a new StatisticsReqeust.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IStatisticsReqeust);
+
+        /** StatisticsReqeust contracts. */
+        public contracts: string[];
+
+        /** StatisticsReqeust all. */
+        public all: boolean;
+
+        /**
+         * Creates a new StatisticsReqeust instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns StatisticsReqeust instance
+         */
+        public static create(properties?: pruntime_rpc.IStatisticsReqeust): pruntime_rpc.StatisticsReqeust;
+
+        /**
+         * Encodes the specified StatisticsReqeust message. Does not implicitly {@link pruntime_rpc.StatisticsReqeust.verify|verify} messages.
+         * @param message StatisticsReqeust message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IStatisticsReqeust, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified StatisticsReqeust message, length delimited. Does not implicitly {@link pruntime_rpc.StatisticsReqeust.verify|verify} messages.
+         * @param message StatisticsReqeust message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IStatisticsReqeust, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a StatisticsReqeust message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns StatisticsReqeust
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.StatisticsReqeust;
+
+        /**
+         * Decodes a StatisticsReqeust message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns StatisticsReqeust
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.StatisticsReqeust;
+
+        /**
+         * Verifies a StatisticsReqeust message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a StatisticsReqeust message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns StatisticsReqeust
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.StatisticsReqeust;
+
+        /**
+         * Creates a plain object from a StatisticsReqeust message. Also converts values to other types if specified.
+         * @param message StatisticsReqeust
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.StatisticsReqeust, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this StatisticsReqeust to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for StatisticsReqeust
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a StatisticsResponse. */
+    interface IStatisticsResponse {
+
+        /** StatisticsResponse uptime */
+        uptime?: (number|Long|null);
+
+        /** StatisticsResponse cores */
+        cores?: (number|null);
+
+        /** StatisticsResponse query */
+        query?: (pruntime_rpc.IQueryStats|null);
+
+        /** StatisticsResponse httpEgress */
+        httpEgress?: (pruntime_rpc.IHttpEgressStats|null);
+    }
+
+    /** Represents a StatisticsResponse. */
+    class StatisticsResponse implements IStatisticsResponse {
+
+        /**
+         * Constructs a new StatisticsResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IStatisticsResponse);
+
+        /** StatisticsResponse uptime. */
+        public uptime: (number|Long);
+
+        /** StatisticsResponse cores. */
+        public cores: number;
+
+        /** StatisticsResponse query. */
+        public query?: (pruntime_rpc.IQueryStats|null);
+
+        /** StatisticsResponse httpEgress. */
+        public httpEgress?: (pruntime_rpc.IHttpEgressStats|null);
+
+        /**
+         * Creates a new StatisticsResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns StatisticsResponse instance
+         */
+        public static create(properties?: pruntime_rpc.IStatisticsResponse): pruntime_rpc.StatisticsResponse;
+
+        /**
+         * Encodes the specified StatisticsResponse message. Does not implicitly {@link pruntime_rpc.StatisticsResponse.verify|verify} messages.
+         * @param message StatisticsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IStatisticsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified StatisticsResponse message, length delimited. Does not implicitly {@link pruntime_rpc.StatisticsResponse.verify|verify} messages.
+         * @param message StatisticsResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IStatisticsResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a StatisticsResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns StatisticsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.StatisticsResponse;
+
+        /**
+         * Decodes a StatisticsResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns StatisticsResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.StatisticsResponse;
+
+        /**
+         * Verifies a StatisticsResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a StatisticsResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns StatisticsResponse
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.StatisticsResponse;
+
+        /**
+         * Creates a plain object from a StatisticsResponse message. Also converts values to other types if specified.
+         * @param message StatisticsResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.StatisticsResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this StatisticsResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for StatisticsResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a QueryStats. */
+    interface IQueryStats {
+
+        /** QueryStats global */
+        global?: (pruntime_rpc.IQueryCounters|null);
+
+        /** QueryStats byContract */
+        byContract?: ({ [k: string]: pruntime_rpc.IQueryCounters }|null);
+    }
+
+    /** Represents a QueryStats. */
+    class QueryStats implements IQueryStats {
+
+        /**
+         * Constructs a new QueryStats.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IQueryStats);
+
+        /** QueryStats global. */
+        public global?: (pruntime_rpc.IQueryCounters|null);
+
+        /** QueryStats byContract. */
+        public byContract: { [k: string]: pruntime_rpc.IQueryCounters };
+
+        /**
+         * Creates a new QueryStats instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns QueryStats instance
+         */
+        public static create(properties?: pruntime_rpc.IQueryStats): pruntime_rpc.QueryStats;
+
+        /**
+         * Encodes the specified QueryStats message. Does not implicitly {@link pruntime_rpc.QueryStats.verify|verify} messages.
+         * @param message QueryStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IQueryStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified QueryStats message, length delimited. Does not implicitly {@link pruntime_rpc.QueryStats.verify|verify} messages.
+         * @param message QueryStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IQueryStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a QueryStats message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns QueryStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.QueryStats;
+
+        /**
+         * Decodes a QueryStats message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns QueryStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.QueryStats;
+
+        /**
+         * Verifies a QueryStats message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a QueryStats message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns QueryStats
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.QueryStats;
+
+        /**
+         * Creates a plain object from a QueryStats message. Also converts values to other types if specified.
+         * @param message QueryStats
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.QueryStats, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this QueryStats to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for QueryStats
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a QueryCounters. */
+    interface IQueryCounters {
+
+        /** QueryCounters total */
+        total?: (number|Long|null);
+
+        /** QueryCounters dropped */
+        dropped?: (number|Long|null);
+
+        /** QueryCounters time */
+        time?: (number|Long|null);
+    }
+
+    /** Represents a QueryCounters. */
+    class QueryCounters implements IQueryCounters {
+
+        /**
+         * Constructs a new QueryCounters.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IQueryCounters);
+
+        /** QueryCounters total. */
+        public total: (number|Long);
+
+        /** QueryCounters dropped. */
+        public dropped: (number|Long);
+
+        /** QueryCounters time. */
+        public time: (number|Long);
+
+        /**
+         * Creates a new QueryCounters instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns QueryCounters instance
+         */
+        public static create(properties?: pruntime_rpc.IQueryCounters): pruntime_rpc.QueryCounters;
+
+        /**
+         * Encodes the specified QueryCounters message. Does not implicitly {@link pruntime_rpc.QueryCounters.verify|verify} messages.
+         * @param message QueryCounters message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IQueryCounters, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified QueryCounters message, length delimited. Does not implicitly {@link pruntime_rpc.QueryCounters.verify|verify} messages.
+         * @param message QueryCounters message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IQueryCounters, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a QueryCounters message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns QueryCounters
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.QueryCounters;
+
+        /**
+         * Decodes a QueryCounters message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns QueryCounters
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.QueryCounters;
+
+        /**
+         * Verifies a QueryCounters message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a QueryCounters message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns QueryCounters
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.QueryCounters;
+
+        /**
+         * Creates a plain object from a QueryCounters message. Also converts values to other types if specified.
+         * @param message QueryCounters
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.QueryCounters, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this QueryCounters to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for QueryCounters
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a HttpEgressStats. */
+    interface IHttpEgressStats {
+
+        /** HttpEgressStats global */
+        global?: (pruntime_rpc.IHttpCounters|null);
+
+        /** HttpEgressStats byContract */
+        byContract?: ({ [k: string]: pruntime_rpc.IHttpCounters }|null);
+    }
+
+    /** Represents a HttpEgressStats. */
+    class HttpEgressStats implements IHttpEgressStats {
+
+        /**
+         * Constructs a new HttpEgressStats.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IHttpEgressStats);
+
+        /** HttpEgressStats global. */
+        public global?: (pruntime_rpc.IHttpCounters|null);
+
+        /** HttpEgressStats byContract. */
+        public byContract: { [k: string]: pruntime_rpc.IHttpCounters };
+
+        /**
+         * Creates a new HttpEgressStats instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HttpEgressStats instance
+         */
+        public static create(properties?: pruntime_rpc.IHttpEgressStats): pruntime_rpc.HttpEgressStats;
+
+        /**
+         * Encodes the specified HttpEgressStats message. Does not implicitly {@link pruntime_rpc.HttpEgressStats.verify|verify} messages.
+         * @param message HttpEgressStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IHttpEgressStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HttpEgressStats message, length delimited. Does not implicitly {@link pruntime_rpc.HttpEgressStats.verify|verify} messages.
+         * @param message HttpEgressStats message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IHttpEgressStats, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HttpEgressStats message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HttpEgressStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.HttpEgressStats;
+
+        /**
+         * Decodes a HttpEgressStats message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HttpEgressStats
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.HttpEgressStats;
+
+        /**
+         * Verifies a HttpEgressStats message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HttpEgressStats message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HttpEgressStats
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.HttpEgressStats;
+
+        /**
+         * Creates a plain object from a HttpEgressStats message. Also converts values to other types if specified.
+         * @param message HttpEgressStats
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.HttpEgressStats, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HttpEgressStats to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpEgressStats
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a HttpCounters. */
+    interface IHttpCounters {
+
+        /** HttpCounters requests */
+        requests?: (number|Long|null);
+
+        /** HttpCounters failures */
+        failures?: (number|Long|null);
+
+        /** HttpCounters byStatusCode */
+        byStatusCode?: ({ [k: string]: (number|Long) }|null);
+    }
+
+    /** Represents a HttpCounters. */
+    class HttpCounters implements IHttpCounters {
+
+        /**
+         * Constructs a new HttpCounters.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IHttpCounters);
+
+        /** HttpCounters requests. */
+        public requests: (number|Long);
+
+        /** HttpCounters failures. */
+        public failures: (number|Long);
+
+        /** HttpCounters byStatusCode. */
+        public byStatusCode: { [k: string]: (number|Long) };
+
+        /**
+         * Creates a new HttpCounters instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns HttpCounters instance
+         */
+        public static create(properties?: pruntime_rpc.IHttpCounters): pruntime_rpc.HttpCounters;
+
+        /**
+         * Encodes the specified HttpCounters message. Does not implicitly {@link pruntime_rpc.HttpCounters.verify|verify} messages.
+         * @param message HttpCounters message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IHttpCounters, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified HttpCounters message, length delimited. Does not implicitly {@link pruntime_rpc.HttpCounters.verify|verify} messages.
+         * @param message HttpCounters message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IHttpCounters, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a HttpCounters message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns HttpCounters
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.HttpCounters;
+
+        /**
+         * Decodes a HttpCounters message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns HttpCounters
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.HttpCounters;
+
+        /**
+         * Verifies a HttpCounters message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a HttpCounters message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns HttpCounters
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.HttpCounters;
+
+        /**
+         * Creates a plain object from a HttpCounters message. Also converts values to other types if specified.
+         * @param message HttpCounters
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.HttpCounters, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this HttpCounters to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for HttpCounters
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SaveClusterStateArguments. */
+    interface ISaveClusterStateArguments {
+
+        /** SaveClusterStateArguments receiver */
+        receiver?: (string|null);
+
+        /** SaveClusterStateArguments minBlockNumber */
+        minBlockNumber?: (number|null);
+
+        /** SaveClusterStateArguments signature */
+        signature?: (string|null);
+    }
+
+    /** Represents a SaveClusterStateArguments. */
+    class SaveClusterStateArguments implements ISaveClusterStateArguments {
+
+        /**
+         * Constructs a new SaveClusterStateArguments.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.ISaveClusterStateArguments);
+
+        /** SaveClusterStateArguments receiver. */
+        public receiver: string;
+
+        /** SaveClusterStateArguments minBlockNumber. */
+        public minBlockNumber: number;
+
+        /** SaveClusterStateArguments signature. */
+        public signature: string;
+
+        /**
+         * Creates a new SaveClusterStateArguments instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SaveClusterStateArguments instance
+         */
+        public static create(properties?: pruntime_rpc.ISaveClusterStateArguments): pruntime_rpc.SaveClusterStateArguments;
+
+        /**
+         * Encodes the specified SaveClusterStateArguments message. Does not implicitly {@link pruntime_rpc.SaveClusterStateArguments.verify|verify} messages.
+         * @param message SaveClusterStateArguments message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.ISaveClusterStateArguments, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SaveClusterStateArguments message, length delimited. Does not implicitly {@link pruntime_rpc.SaveClusterStateArguments.verify|verify} messages.
+         * @param message SaveClusterStateArguments message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.ISaveClusterStateArguments, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SaveClusterStateArguments message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SaveClusterStateArguments
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.SaveClusterStateArguments;
+
+        /**
+         * Decodes a SaveClusterStateArguments message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SaveClusterStateArguments
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.SaveClusterStateArguments;
+
+        /**
+         * Verifies a SaveClusterStateArguments message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SaveClusterStateArguments message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SaveClusterStateArguments
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.SaveClusterStateArguments;
+
+        /**
+         * Creates a plain object from a SaveClusterStateArguments message. Also converts values to other types if specified.
+         * @param message SaveClusterStateArguments
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.SaveClusterStateArguments, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SaveClusterStateArguments to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SaveClusterStateArguments
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a SaveClusterStateResponse. */
+    interface ISaveClusterStateResponse {
+
+        /** SaveClusterStateResponse blockNumber */
+        blockNumber?: (number|null);
+
+        /** SaveClusterStateResponse filename */
+        filename?: (string|null);
+    }
+
+    /** Represents a SaveClusterStateResponse. */
+    class SaveClusterStateResponse implements ISaveClusterStateResponse {
+
+        /**
+         * Constructs a new SaveClusterStateResponse.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.ISaveClusterStateResponse);
+
+        /** SaveClusterStateResponse blockNumber. */
+        public blockNumber: number;
+
+        /** SaveClusterStateResponse filename. */
+        public filename: string;
+
+        /**
+         * Creates a new SaveClusterStateResponse instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns SaveClusterStateResponse instance
+         */
+        public static create(properties?: pruntime_rpc.ISaveClusterStateResponse): pruntime_rpc.SaveClusterStateResponse;
+
+        /**
+         * Encodes the specified SaveClusterStateResponse message. Does not implicitly {@link pruntime_rpc.SaveClusterStateResponse.verify|verify} messages.
+         * @param message SaveClusterStateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.ISaveClusterStateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified SaveClusterStateResponse message, length delimited. Does not implicitly {@link pruntime_rpc.SaveClusterStateResponse.verify|verify} messages.
+         * @param message SaveClusterStateResponse message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.ISaveClusterStateResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a SaveClusterStateResponse message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns SaveClusterStateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.SaveClusterStateResponse;
+
+        /**
+         * Decodes a SaveClusterStateResponse message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns SaveClusterStateResponse
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.SaveClusterStateResponse;
+
+        /**
+         * Verifies a SaveClusterStateResponse message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a SaveClusterStateResponse message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns SaveClusterStateResponse
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.SaveClusterStateResponse;
+
+        /**
+         * Creates a plain object from a SaveClusterStateResponse message. Also converts values to other types if specified.
+         * @param message SaveClusterStateResponse
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.SaveClusterStateResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this SaveClusterStateResponse to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for SaveClusterStateResponse
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    /** Properties of a PinkRuntimeVersion. */
+    interface IPinkRuntimeVersion {
+
+        /** PinkRuntimeVersion major */
+        major?: (number|null);
+
+        /** PinkRuntimeVersion minor */
+        minor?: (number|null);
+    }
+
+    /** Represents a PinkRuntimeVersion. */
+    class PinkRuntimeVersion implements IPinkRuntimeVersion {
+
+        /**
+         * Constructs a new PinkRuntimeVersion.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: pruntime_rpc.IPinkRuntimeVersion);
+
+        /** PinkRuntimeVersion major. */
+        public major: number;
+
+        /** PinkRuntimeVersion minor. */
+        public minor: number;
+
+        /**
+         * Creates a new PinkRuntimeVersion instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns PinkRuntimeVersion instance
+         */
+        public static create(properties?: pruntime_rpc.IPinkRuntimeVersion): pruntime_rpc.PinkRuntimeVersion;
+
+        /**
+         * Encodes the specified PinkRuntimeVersion message. Does not implicitly {@link pruntime_rpc.PinkRuntimeVersion.verify|verify} messages.
+         * @param message PinkRuntimeVersion message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(message: pruntime_rpc.IPinkRuntimeVersion, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Encodes the specified PinkRuntimeVersion message, length delimited. Does not implicitly {@link pruntime_rpc.PinkRuntimeVersion.verify|verify} messages.
+         * @param message PinkRuntimeVersion message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(message: pruntime_rpc.IPinkRuntimeVersion, writer?: $protobuf.Writer): $protobuf.Writer;
+
+        /**
+         * Decodes a PinkRuntimeVersion message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns PinkRuntimeVersion
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): pruntime_rpc.PinkRuntimeVersion;
+
+        /**
+         * Decodes a PinkRuntimeVersion message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns PinkRuntimeVersion
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): pruntime_rpc.PinkRuntimeVersion;
+
+        /**
+         * Verifies a PinkRuntimeVersion message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): (string|null);
+
+        /**
+         * Creates a PinkRuntimeVersion message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns PinkRuntimeVersion
+         */
+        public static fromObject(object: { [k: string]: any }): pruntime_rpc.PinkRuntimeVersion;
+
+        /**
+         * Creates a plain object from a PinkRuntimeVersion message. Also converts values to other types if specified.
+         * @param message PinkRuntimeVersion
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(message: pruntime_rpc.PinkRuntimeVersion, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+        /**
+         * Converts this PinkRuntimeVersion to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for PinkRuntimeVersion
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 }
 
@@ -5803,6 +7654,13 @@ export namespace google {
              * @returns JSON object
              */
             public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Empty
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
     }
 }
