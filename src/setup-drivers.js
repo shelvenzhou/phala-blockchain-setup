@@ -1,160 +1,110 @@
 require('dotenv').config();
 
 const { ApiPromise, WsProvider, Keyring } = require('@polkadot/api');
-const { typeDefinitions } = require('@polkadot/types');
-const { ContractPromise } = require('@polkadot/api-contract');
-const Phala = require('@phala/sdk');
+const { blake2AsHex } = require('@polkadot/util-crypto');
+const { options, OnChainRegistry, signCertificate, PinkContractPromise, signAndSend, PinkCodePromise, PinkLoggerContractPromise } = require('@phala/sdk');
 const fs = require('fs');
 const crypto = require('crypto');
 const { PRuntimeApi } = require('./utils/pruntime');
 
 const CENTS = 10_000_000_000;
-const SECONDS = 1_000_000_000_000;
 const defaultTxConfig = { gasLimit: "10000000000000" };
 
-const BLOCK_INTERVAL = 12_000;
+const BLOCK_INTERVAL = 3_000;
 
 function loadContractFile(contractFile) {
     const metadata = JSON.parse(fs.readFileSync(contractFile));
-    const constructor = metadata.spec.constructors.find(c => c.label == 'default').selector;
     const name = metadata.contract.name;
     const wasm = metadata.source.wasm;
-    return { wasm, metadata, constructor, name };
+    return { metadata, name, wasm };
 }
 
-async function estimateFee(api, system, cert, contract, salt) {
-    // Estimate gas limit
-    /*
-        InkInstantiate {
-            code_hash: sp_core::H256,
-            salt: Vec<u8>,
-            instantiate_data: Vec<u8>,
-            /// Amount of tokens deposit to the caller.
-            deposit: u128,
-            /// Amount of tokens transfer from the caller to the target contract.
-            transfer: u128,
-        },
-     */
-    const instantiateReturn = await system.instantiate({
-        codeHash: contract.metadata.source.hash,
-        salt,
-        instantiateData: contract.constructor, // please concat with args if needed
-        deposit: 0,
-        transfer: 0,
-        estimating: true
-    }, cert);
+async function uploadResource(api, system, pair, cert, clusterId, codeType, wasm) {
+    let hash = blake2AsHex(wasm);
+    console.log(`Upload ${codeType} ${hash}`);
+    let type = codeType == "SidevmCode" ? 'Sidevm' : 'Ink';
+    const { output } = await system.query["system::codeExists"](pair.address, { cert }, hash, type);
+    if (output.asOk.toPrimitive()) {
+        console.log("Code exists")
+        return;
+    }
 
-    // console.log("instantiate result:", instantiateReturn);
-    const queryResponse = api.createType('InkResponse', instantiateReturn);
-    const queryResult = queryResponse.result.toHuman()
-    // console.log("InkMessageReturn", queryResult.Ok.InkMessageReturn);
-    // const instantiateResult = api.createType('ContractInstantiateResult', queryResult.Ok.result);
-    // console.assert(instantiateResult.result.isOk, 'fee estimation failed');
-    return instantiateReturn;
-}
-
-async function deployContract(api, txqueue, system, pair, cert, contract, clusterId, salt) {
-    console.log(`Contract: deploying ${contract.name}`);
-
-    // upload the contract
-    await txqueue.submit(
-        api.tx.phalaPhatContracts.clusterUploadResource(clusterId, 'InkCode', contract.wasm),
-        pair);
-
-    // Not sure how much time it would take to sync the code into pruntime
-    console.log('Waiting the code to be synced into pruntime');
-    await sleep(10000);
-
-    salt = salt ? salt : hex(crypto.randomBytes(4));
-    let estimatedFee = await estimateFee(api, system, cert, contract, salt);
-
-    const { events: deployEvents } = await txqueue.submit(
-        /*
-        pub fn instantiate_contract(
-            origin: OriginFor<T>,
-            code_index: CodeIndex<CodeHash<T>>,
-            data: Vec<u8>,
-            salt: Vec<u8>,
-            cluster_id: ContractClusterId,
-            transfer: u128,
-            gas_limit: u64,
-            storage_deposit_limit: Option<u128>,
-        ) -> DispatchResult {
-        */
-        api.tx.phalaPhatContracts.instantiateContract(
-            { WasmCode: contract.metadata.source.hash },
-            contract.constructor,
-            salt,
-            clusterId,
-            0,
-            estimatedFee.gasRequired.refTime,
-            estimatedFee.storageDeposit.asCharge || 0,
-            0,
-        ),
+    await signAndSend(
+        api.tx.phalaPhatContracts.clusterUploadResource(clusterId, codeType, wasm),
         pair
     );
-    const contractIds = deployEvents
-        .filter(ev => ev.event.section == 'phalaPhatContracts' && ev.event.method == 'Instantiating')
-        .map(ev => ev.event.data[0].toString());
-    const numContracts = 1;
-    console.assert(contractIds.length == numContracts, 'Incorrect length:', `${contractIds.length} vs ${numContracts}`);
-    contract.address = contractIds[0];
-    await checkUntilEq(
-        async () => (await api.query.phalaPhatContracts.clusterContracts(clusterId))
-            .filter(c => contractIds.includes(c.toString()))
-            .length,
-        numContracts,
-        8 * BLOCK_INTERVAL
-    );
-    await checkUntil(
-        async () => (await api.query.phalaRegistry.contractKeys(contract.address)).isSome,
-        8 * BLOCK_INTERVAL
-    );
+    await checkUntil(async () => {
+        const { output } = await system.query["system::codeExists"](pair.address, { cert }, hash, type);
+        return output.asOk.toPrimitive();
+    }, 8 * BLOCK_INTERVAL);
+    console.log("Code uploaded")
+}
+
+async function uploadAndDeployContract(api, phatRegistry, pair, cert, contract, salt) {
+    console.log(`Contract: uploading ${contract.name}`);
+    const codePromise = new PinkCodePromise(api, phatRegistry, contract.metadata, contract.wasm);
+    const uploadResult = await signAndSend(codePromise.tx.default(defaultTxConfig), pair);
+    await uploadResult.waitFinalized(pair, cert, 8 * BLOCK_INTERVAL);
+    console.log("uploaded");
+
+    console.log(`Contract: instantiating ${contract.name}`);
+    let instantiateResult
+    try {
+        const { blueprint } = uploadResult;
+        const { gasRequired, storageDeposit, salt: saltRand } = await blueprint.query.default(pair.address, { cert });
+        salt = salt ? salt : saltRand;
+        instantiateResult = await signAndSend(
+            blueprint.tx.default({ gasLimit: gasRequired.refTime * 10, storageDepositLimit: storageDeposit.isCharge ? storageDeposit.asCharge : null, salt }),
+            pair
+        )
+        await instantiateResult.waitFinalized();
+    } catch (err) {
+        console.log(`Instantiate failed: ${err}`)
+        console.error(err)
+        return process.exit(1)
+    }
+
+    const { contractId } = instantiateResult
+    contract.address = contractId;
     console.log(`Contract: ${contract.name} deployed to ${contract.address}`);
 }
 
-async function deployDriverContract(api, txqueue, system, pair, cert, contract, clusterId, name, salt) {
+async function deployDriverContract(api, phatRegistry, system, pair, cert, contract, driverName, salt) {
     // check the existense of driver contract
-    const { output } = await system.query["system::getDriver"](cert, {}, name);
+    const { output } = await system.query["system::getDriver"](pair.address, { cert }, driverName);
     if (output?.asOk.isSome) {
         contract.address = output?.asOk.unwrap().toHex();
-        console.log(`Driver ${name} exists in ${contract.address}`);
+        console.log(`Driver ${driverName} exists in ${contract.address}`);
         return contract.address;
     }
 
-    await deployContract(api, txqueue, system, pair, cert, contract, clusterId, salt);
+    await uploadAndDeployContract(api, phatRegistry, pair, cert, contract, salt);
 
     // use query to estimate the required gas for system::setDriver
-    const { gasRequired, storageDeposit } = await system.query["system::setDriver"](cert, {}, name, contract.address);
+    const { gasRequired, storageDeposit } = await system.query["system::setDriver"](pair.address, { cert }, driverName, contract.address);
     const options = {
         value: 0,
         gasLimit: gasRequired,
         storageDepositLimit: storageDeposit.isCharge ? storageDeposit.asCharge : null
     };
-    await txqueue.submit(
-        system.tx["system::setDriver"](options, name, contract.address),
-        pair
-    );
-    await txqueue.submit(
-        system.tx["system::grantAdmin"](defaultTxConfig, contract.address),
-        pair
-    );
+    await signAndSend(system.tx["system::setDriver"](options, driverName, contract.address), pair);
+    await signAndSend(system.tx["system::grantAdmin"](defaultTxConfig, contract.address), pair);
 
     console.log('Driver: wait for registration');
     await checkUntil(
         async () => {
-            const { output } = await system.query["system::getDriver"](cert, {}, name);
+            const { output } = await system.query["system::getDriver"](pair.address, { cert }, driverName);
             return output?.asOk.isSome && output?.asOk.unwrap().eq(contract.address);
         },
         8 * BLOCK_INTERVAL
     );
-    console.log(`Driver ${name} set to ${contract.address}`)
+    console.log(`Driver ${driverName} set to ${contract.address}`)
     return contract.address;
 }
 
-async function uploadSystemCode(api, txqueue, pair, wasm) {
+async function uploadSystemCode(api, pair, wasm) {
     console.log(`Uploading system code`);
-    await txqueue.submit(
+    await signAndSend(
         api.tx.sudo.sudo(api.tx.phalaPhatContracts.setPinkSystemCode(hex(wasm))),
         pair
     );
@@ -163,63 +113,6 @@ async function uploadSystemCode(api, txqueue, pair, wasm) {
         return code[1] == wasm;
     }, 8 * BLOCK_INTERVAL);
     console.log(`Uploaded system code`);
-}
-
-class TxQueue {
-    constructor(api) {
-        this.nonceTracker = {};
-        this.api = api;
-    }
-    async nextNonce(address) {
-        const byCache = this.nonceTracker[address] || 0;
-        const byRpc = (await this.api.rpc.system.accountNextIndex(address)).toNumber();
-        return Math.max(byCache, byRpc);
-    }
-    markNonceFailed(address, nonce) {
-        if (!this.nonceTracker[address]) {
-            return;
-        }
-        if (nonce < this.nonceTracker[address]) {
-            this.nonceTracker[address] = nonce;
-        }
-    }
-    async submit(txBuilder, signer, waitForFinalization = false) {
-        const address = signer.address;
-        const nonce = await this.nextNonce(address);
-        this.nonceTracker[address] = nonce + 1;
-        let hash;
-        return new Promise(async (resolve, reject) => {
-            const unsub = await txBuilder.signAndSend(signer, { nonce }, (result) => {
-                if (result.status.isInBlock) {
-                    for (const e of result.events) {
-                        const { event: { data, method, section } } = e;
-                        if (section === 'system' && method === 'ExtrinsicFailed') {
-                            unsub();
-                            reject(data[0].toHuman())
-                        }
-                    }
-                    if (!waitForFinalization) {
-                        unsub();
-                        resolve({
-                            hash: result.status.asInBlock,
-                            events: result.events,
-                        });
-                    } else {
-                        hash = result.status.asInBlock;
-                    }
-                } else if (result.status.isFinalized) {
-                    resolve({
-                        hash,
-                        events: result.events,
-                    })
-                } else if (result.status.isInvalid) {
-                    unsub();
-                    this.markNonceFailed(address, nonce);
-                    reject('Invalid transaction');
-                }
-            });
-        });
-    }
 }
 
 async function sleep(t) {
@@ -273,9 +166,9 @@ function hex(b) {
     }
 }
 
-async function forceRegisterWorker(api, txpool, pair, worker) {
+async function forceRegisterWorker(api, pair, worker) {
     console.log('Worker: registering', worker);
-    await txpool.submit(
+    await signAndSend(
         api.tx.sudo.sudo(
             api.tx.phalaRegistry.forceRegisterWorker(worker, worker, null)
         ),
@@ -288,14 +181,14 @@ async function forceRegisterWorker(api, txpool, pair, worker) {
     console.log('Worker: added');
 }
 
-async function setupGatekeeper(api, txpool, pair, worker) {
+async function setupGatekeeper(api, pair, worker) {
     const gatekeepers = await api.query.phalaRegistry.gatekeeper();
     if (gatekeepers.toHuman().includes(worker)) {
         console.log('Gatekeeper: skip', worker);
         return;
     }
     console.log('Gatekeeper: registering');
-    await txpool.submit(
+    await signAndSend(
         api.tx.sudo.sudo(
             api.tx.phalaRegistry.registerGatekeeper(worker)
         ),
@@ -313,20 +206,20 @@ async function setupGatekeeper(api, txpool, pair, worker) {
     console.log('Gatekeeper: master key ready');
 }
 
-async function deployCluster(api, txqueue, sudoer, owner, workers, treasury, defaultCluster = '0x0000000000000000000000000000000000000000000000000000000000000001') {
+async function getOrDeployCluster(api, sudoer, owner, workers, treasury, defaultCluster = '0x0000000000000000000000000000000000000000000000000000000000000001') {
     const clusterInfo = await api.query.phalaPhatContracts.clusters(defaultCluster);
     if (clusterInfo.isSome) {
         return { clusterId: defaultCluster, systemContract: clusterInfo.unwrap().systemContract.toHex() };
     }
     console.log('Cluster: creating');
     // crete contract cluster and wait for the setup
-    const { events } = await txqueue.submit(
+    const { events } = await signAndSend(
         api.tx.sudo.sudo(api.tx.phalaPhatContracts.addCluster(
             owner,
             'Public', // can be {'OnlyOwner': accountId}
             workers,
-            "100000000000000", // 100 PHA
-            1, 1, 1, treasury.address
+            "10000000000000000", // 10000 PHA
+            5, 50000000000, 1000000000, treasury.address
         )),
         sudoer
     );
@@ -350,16 +243,9 @@ async function deployCluster(api, txqueue, sudoer, owner, workers, treasury, def
     return { clusterId, systemContract };
 }
 
-async function contractApi(api, pruntimeUrl, contract) {
-    const newApi = await api.clone().isReady;
-    const phala = await Phala.create({ api: newApi, baseURL: pruntimeUrl, contractId: contract.address, autoDeposit: true });
-    const contractApi = new ContractPromise(
-        phala.api,
-        contract.metadata,
-        contract.address,
-    );
-    contractApi.sidevmQuery = phala.sidevmQuery;
-    contractApi.instantiate = phala.instantiate;
+async function contractApi(api, phatRegistry, contract) {
+    const contractKey = await phatRegistry.getContractKeyOrFail(contract.address);
+    const contractApi = new PinkContractPromise(api, phatRegistry, contract.metadata, contract.address, contractKey);
     return contractApi;
 }
 
@@ -392,25 +278,18 @@ async function main() {
     const logServerSidevmWasm = fs.readFileSync(`${driversDir}/log_server.sidevm.wasm`, 'hex');
 
     // Connect to the chain
-    const wsProvider = new WsProvider(nodeUrl);
-    const api = await ApiPromise.create({
-        provider: wsProvider,
-        types: {
-            ...Phala.types,
-            'GistQuote': {
-                username: 'String',
-                accountId: 'AccountId',
-            },
-            ...typeDefinitions.contracts.types,
-        }
-    });
-    const txqueue = new TxQueue(api);
+    const api = await ApiPromise.create(
+        options({
+            provider: new WsProvider(nodeUrl),
+            noInitWarn: true,
+        })
+    );
 
     // Prepare accounts
     const keyring = new Keyring({ type: 'sr25519' });
     const sudo = keyring.addFromUri(sudoAccount);
     const treasury = keyring.addFromUri(treasuryAccount);
-    const certSudo = await Phala.signCertificate({ api, pair: sudo });
+    const certSudo = await signCertificate({ pair: sudo });
 
     // Connect to pruntimes
     const workers = await Promise.all(workerUrls.map(async w => {
@@ -426,7 +305,7 @@ async function main() {
 
     // Basic phala network setup
     for (const w of workers) {
-        await forceRegisterWorker(api, txqueue, sudo, w.pubkey);
+        await forceRegisterWorker(api, sudo, w.pubkey);
         await w.api.addEndpoint({ encodedEndpointType: [1], endpoint: w.url }); // EndpointType: 0 for I2P and 1 for HTTP
     }
     if (gatekeeperUrls) {
@@ -441,47 +320,42 @@ async function main() {
         }));
         console.log('Gatekeepers', gatekeepers);
         for (const w of gatekeepers) {
-            await forceRegisterWorker(api, txqueue, sudo, w.pubkey);
-            await setupGatekeeper(api, txqueue, sudo, w.pubkey);
+            await forceRegisterWorker(api, sudo, w.pubkey);
+            await setupGatekeeper(api, sudo, w.pubkey);
         }
     }
 
     // Upload the pink-system wasm to the chain. It is required to create a cluster.
-    await uploadSystemCode(api, txqueue, sudo, contractSystem.wasm);
+    await uploadSystemCode(api, sudo, contractSystem.wasm);
 
-    const { clusterId, systemContract } = await deployCluster(api, txqueue, sudo, sudo.address, workers.map(w => w.pubkey), treasury);
+    const { clusterId, systemContract } = await getOrDeployCluster(api, sudo, sudo.address, workers.map(w => w.pubkey), treasury);
     contractSystem.address = systemContract;
     console.log('Cluster system contract address:', systemContract);
 
-    let default_worker = workers[0];
-    let pruntimeUrl = default_worker.url;
-    console.log(`Connect to ${pruntimeUrl} for query`);
+    const phatRegistry = await OnChainRegistry.create(api)
+    const default_worker = workers[0];
+    console.log(`Connect to ${default_worker.url} for query`);
 
-    const system = await contractApi(api, pruntimeUrl, contractSystem);
-
-    // Transfer some tokens to the cluster for owner
-    await txqueue.submit(
-        api.tx.phalaPhatContracts.transferToCluster(CENTS * 100, clusterId, sudo.address),
-        sudo,
-    );
+    const system = await contractApi(api, phatRegistry, contractSystem);
 
     // Deploy the tokenomic contract
-    await deployDriverContract(api, txqueue, system, sudo, certSudo, contractTokenomic, clusterId, "ContractDeposit");
+    await deployDriverContract(api, phatRegistry, system, sudo, certSudo, contractTokenomic, "ContractDeposit");
 
     // Stake some tokens to the system contract
+    console.log(`Stake to system contract`);
     const stakedCents = 42;
-    await txqueue.submit(
+    await signAndSend(
         api.tx.phalaPhatTokenomic.adjustStake(systemContract, CENTS * stakedCents),
         sudo
     );
     // Contract weight should be affected
     await checkUntilEq(
         async () => {
-            const { weight } = (await default_worker.api.getContractInfo(systemContract));
+            const { weight } = await default_worker.api.getContractInfo(systemContract);
             return weight;
         },
         stakedCents,
-        10 * BLOCK_INTERVAL
+        8 * BLOCK_INTERVAL
     );
 
     // Total stakes to the contract should be changed
@@ -492,28 +366,23 @@ async function main() {
     const stakesOfOwner = await api.query.phalaPhatTokenomic.contractUserStakes.entries(sudo.address);
     console.log('Stakes of cluster owner:');
     stakesOfOwner.forEach(([key, stake]) => {
-        console.log('contract:', key.args[1].toHex());
-        console.log('   stake:', stake.toHuman());
+        console.log('\tcontract:', key.args[1].toHex());
+        console.log('\t   stake:', stake.toHuman());
     });
 
     // Deploy the QuickJS engine
-    const { output } = await system.query["system::getDriver"](certSudo, {}, 'JsDelegate');
+    const { output } = await system.query["system::getDriver"](sudo.address, { cert: certSudo }, "JsDelegate");
     if (output?.asOk.isSome) {
         contractQjs.address = output?.asOk.unwrap().toHex();
         console.log(`Driver JsDelegate exists in ${contractQjs.address}`);
     } else {
-        console.log('Waiting the qjs to be synced into pruntime');
-        await txqueue.submit(api.tx.phalaPhatContracts.clusterUploadResource(clusterId, 'IndeterministicInkCode', contractQjs.wasm), sudo);
-        console.log(`Set JsDelegate code`);
-        await txqueue.submit(
-            system.tx["system::setDriver"]({ gasLimit: "10000000000000" }, 'JsDelegate', contractQjs.metadata.source.hash),
-            sudo
-        );
-        console.log('Driver: wait for registration');
+        await uploadResource(api, system, sudo, certSudo, clusterId, 'IndeterministicInkCode', contractQjs.wasm);
+
+        await signAndSend(system.tx["system::setDriver"](defaultTxConfig, "JsDelegate", contractQjs.metadata.source.hash), sudo);
+        console.log("Driver: wait for registration");
         await checkUntil(async () => {
             const { output } = await system.query["system::getDriver"](
-                certSudo,
-                {},
+                sudo.address, { cert: certSudo },
                 "JsDelegate"
             );
             return output?.asOk.isSome;
@@ -521,9 +390,9 @@ async function main() {
     }
 
     // Deploy driver: Sidevm deployer
-    await deployDriverContract(api, txqueue, system, sudo, certSudo, contractSidevmop, clusterId, "SidevmOperation");
+    await deployDriverContract(api, phatRegistry, system, sudo, certSudo, contractSidevmop, "SidevmOperation");
 
-    const sidevmDeployer = await contractApi(api, pruntimeUrl, contractSidevmop);
+    const sidevmDeployer = await contractApi(api, phatRegistry, contractSidevmop);
 
     // Allow the logger to deploy sidevm
     const salt = hex(crypto.randomBytes(4));
@@ -536,91 +405,34 @@ async function main() {
     console.log(`calculated loggerId = ${loggerId}`);
 
     // authrize contract to start sidevm in advance
-    await txqueue.submit(
-        sidevmDeployer.tx.allow(defaultTxConfig, loggerId),
-        sudo
-    );
+    await sidevmDeployer.tx.allow(defaultTxConfig, loggerId).signAndSend(sudo);
     console.log('SideVM: allowing logger contract');
     await checkUntil(
         async () => {
-            let { output } = await sidevmDeployer.query['sidevmOperation::canDeploy'](certSudo, {}, loggerId);
-            return output.asOk;
+            let { output } = await sidevmDeployer.query['sidevmOperation::canDeploy'](sudo.address, { cert: certSudo }, loggerId);
+            return output.asOk.toPrimitive();
         },
         8 * BLOCK_INTERVAL
     );
 
     // Upload the logger's sidevm wasm code
-    await txqueue.submit(
-        api.tx.phalaPhatContracts.clusterUploadResource(clusterId, 'SidevmCode', hex(logServerSidevmWasm)),
-        sudo);
-    console.log('Waiting the code to be synced into pruntime');
-    await sleep(10000);
-
+    await uploadResource(api, system, sudo, certSudo, clusterId, 'SidevmCode', hex(logServerSidevmWasm));
     // Deploy the logger contract
-    await deployDriverContract(api, txqueue, system, sudo, certSudo, contractLogServer, clusterId, "PinkLogger", salt);
+    await deployDriverContract(api, phatRegistry, system, sudo, certSudo, contractLogServer, "PinkLogger", salt);
 
-    await sleep(2000);
-    const logger = await contractApi(api, pruntimeUrl, contractLogServer);
-    // Trigger some contract logs
-    for (var i = 0; i < 5; i++) {
-        await logger.query.logTest(certSudo, {}, "hello " + i);
+    const pinkLogger = await PinkLoggerContractPromise.create(api, phatRegistry, phatRegistry.systemContract);
+    const { records } = await pinkLogger.getLog(systemContract);
+    console.log("Log records:");
+    for (let rec of records) {
+        if (rec['type'] === 'Log') {
+            const d = new Date(rec['timestamp'])
+            console.log(`\t${rec['type']} #${rec['blockNumber']} [${d.toISOString()}] ${rec['message']}`)
+        } else if (rec['type'] === 'MessageOutput') {
+            console.log(`\t${rec['type']} #${rec['blockNumber']} ${rec['output']}`)
+        } else {
+            console.log(`\t${rec['type']} ${JSON.stringify(rec)}`)
+        }
     }
-    // Query input: a JSON doc with three optinal fields:
-    const condition = {
-        // What to do. Only `GetLog` is supported currently
-        action: 'GetLog',
-        // The target contract to query. Default to all contracts
-        contract: contractLogServer.address,
-        // The sequence number start from. Default to 0.
-        from: 1,
-        // Max number of items should returned. Default to not limited.
-        count: 2,
-    };
-    const data = hex(toBytes(JSON.stringify(condition)));
-    const hexlog = await logger.sidevmQuery(data, certSudo);
-
-    // Log parsing
-    const resp = api.createType('InkResponse', hexlog);
-    const result = resp.result.toHuman()
-    const text = result.Ok.InkMessageReturn
-    console.log('log:', text)
-
-    // Sample query response:
-    const _ = {
-        "next": 3, // Sequence number for the next query. For pagination.
-        "records": [
-            {
-                "blockNumber": 0,
-                "contract": "0x0101010101010101010101010101010101010101010101010101010101010101",
-                "inQuery": true,
-                "level": 0,
-                "message": "hello", // Log content
-                "sequence": 0,
-                "timestamp": 1,
-                "type": "Log" // Type of the records. could be one of ['Log', 'Event', 'MessageOutput']
-            },
-            {
-                "blockNumber": 1,
-                "contract": "0x0101010101010101010101010101010101010101010101010101010101010101",
-                "payload": "0x01020304",
-                "sequence": 1,
-                "topics": [
-                    "0x0202020202020202020202020202020202020202020202020202020202020202",
-                    "0x0303030303030303030303030303030303030303030303030303030303030303"
-                ],
-                "type": "Event"
-            },
-            {
-                "blockNumber": 2,
-                "contract": "0x0202020202020202020202020202020202020202020202020202020202020202",
-                "nonce": "0x0102030405",
-                "origin": "0x0101010101010101010101010101010101010101010101010101010101010101",
-                "output": "0x0504030201",
-                "sequence": 2,
-                "type": "MessageOutput"
-            }
-        ]
-    };
 }
 
 main().then(process.exit).catch(err => console.error('Crashed', err)).finally(() => process.exit(-1));
